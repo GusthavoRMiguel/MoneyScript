@@ -1,0 +1,16 @@
+{
+  "name": "Money Script",
+  "short_name": "MS",
+  "icons": [
+    {
+      "src": "/assets/icon.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    }
+  ],
+  "background_color": "#0c0f16",
+  "description": "App PWA",
+  "display": "fullscreen",
+  "start_url": "/",
+  "theme_color": "#0c0f16"
+}
