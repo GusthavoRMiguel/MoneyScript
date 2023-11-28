@@ -20,7 +20,7 @@ const RegisterPage: React.FC = () => {
   const { signupEmail } = useAuth();
   const [error, setError] = useState<string>('');
   const [isFormSubmitting, setFormSubmitting] = useState<boolean>(false);
-  const router = useRouter();
+
   const initialValues = {
     email: '',
     password: '',

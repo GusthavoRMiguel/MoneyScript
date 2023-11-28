@@ -16,7 +16,7 @@ import {
 } from 'react-icons/fa';
 import { MdVerified } from 'react-icons/md';
 
-const Account: React.FC = () => {
+const AccountPage: React.FC = () => {
   const { linkFacebook, linkGitHub, linkGoogle, user } = useAuth();
   const { userData, getUserData, updateUserData, profissionalData } = useDB();
   const [content, setContent] = useState('Info');
@@ -77,12 +77,14 @@ const Account: React.FC = () => {
 
                 <S.Info>
                   <h1>
-                    {userData.nome} {userData.sobrenome}
+                    {userData.nome || 'UserName'}{' '}
+                    {userData.sobrenome || 'UserlastName'}
                   </h1>
                   <h2>
-                    {profissionalData.profissao} {profissionalData.cargo}
+                    {profissionalData.profissao || 'Profissão'} -
+                    {profissionalData.cargo || 'Cargo'}
                   </h2>
-                  <h2>{userData.email}</h2>
+                  <h2>{userData.email || 'user@email.com'}</h2>
                 </S.Info>
                 <S.Link>
                   <h1>Sincronizar contas.</h1>
@@ -277,4 +279,4 @@ const Account: React.FC = () => {
   );
 };
 
-export default Account;
+export default AccountPage;

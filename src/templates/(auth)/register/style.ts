@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const Container = styled.main`
   width: 100vw;
@@ -17,5 +17,13 @@ export const Container = styled.main`
     min-width: 430px;
     border-color: skyblue;
     background-color: white;
+  }
+
+  @media (max-width: 620px) {
+    height: 100%;
+    form.flexForm {
+      min-width: 90%;
+      margin-top: 25%;
+    }
   }
 `;

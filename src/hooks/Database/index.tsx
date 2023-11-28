@@ -11,6 +11,8 @@ import { useAuth } from '../Auth';
 
 import IUserData from '@/interfaces/IUserData';
 import IProfissionalData from '@/interfaces/IProfissonalData';
+import ITransaction from '@/interfaces/ITransaction';
+import ITransactionFilter from '@/interfaces/ITransactionFilter';
 
 interface DBContextProps {
   userData: IUserData;
@@ -18,6 +20,16 @@ interface DBContextProps {
   loading: boolean;
   getUserData: () => Promise<void>;
   updateUserData: (data: Partial<IUserData>) => Promise<void>;
+  addProfessionalData: (
+    data: Partial<IProfissionalData>
+  ) => Promise<{ success: boolean; error?: any }>;
+  getProfessionalData: () => Promise<IProfissionalData | null>;
+  addTransaction: (
+    transactionData: ITransaction
+  ) => Promise<{ success: boolean; error?: any }>;
+  getTransactionsByFilter: (
+    filterOptions: ITransactionFilter
+  ) => Promise<any[]>;
 }
 
 const DBContext = createContext<DBContextProps | undefined>(undefined);
@@ -82,6 +94,32 @@ export function DBProvider({ children }: { children: ReactNode }) {
     };
   };
 
+  const formatProfessionalData = async (
+    profissionalData: firebase.firestore.DocumentData | undefined
+  ): Promise<IProfissionalData> => {
+    if (!profissionalData) {
+      return {
+        cargo: '',
+        profissao: '',
+        salario: {
+          fixo: 0,
+          comissao: 0,
+          variavel: 0
+        }
+      };
+    }
+
+    return {
+      cargo: profissionalData.cargo || '',
+      profissao: profissionalData.profissao || '',
+      salario: {
+        fixo: profissionalData.salario?.fixo || 0,
+        comissao: profissionalData.salario?.comissao || 0,
+        variavel: profissionalData.salario?.variavel || 0
+      }
+    };
+  };
+
   const getUserData = async () => {
     try {
       const id = user?.uid;
@@ -116,6 +154,102 @@ export function DBProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const addProfessionalData = async (data: Partial<IProfissionalData>) => {
+    try {
+      const id = user?.uid;
+      if (!id) {
+        return { success: false, error: 'User not authenticated' };
+      }
+      await firebase.firestore().collection('users').doc(id).update({
+        profissionalData: data
+      });
+      setProfissionalData((prevData) => ({ ...prevData, ...data }));
+      return { success: true };
+    } catch (error) {
+      console.error('Error adding professional data: ', error);
+      return { success: false, error };
+    }
+  };
+
+  const getProfessionalData = async (): Promise<IProfissionalData | null> => {
+    try {
+      const id = user?.uid;
+      if (!id) {
+        return null;
+      }
+      const userDoc = await firebase
+        .firestore()
+        .collection('users')
+        .doc(id)
+        .get();
+      const userData = userDoc.data();
+      if (userData && userData.profissionalData) {
+        return formatProfessionalData(userData.profissionalData);
+      }
+      return null;
+    } catch (error) {
+      console.error('Error fetching professional data: ', error);
+      return null;
+    }
+  };
+
+  const addTransaction = async (transactionData: ITransaction) => {
+    try {
+      const id = user?.uid;
+      if (!id) {
+        return { success: false, error: 'User not authenticated' };
+      }
+      const userRef = firebase.firestore().collection('users').doc(id);
+      const transactionsRef = userRef.collection('transactions');
+      await transactionsRef.add(transactionData);
+      return { success: true };
+    } catch (error) {
+      console.error('Error adding transaction: ', error);
+      return { success: false, error };
+    }
+  };
+
+  const getTransactionsByFilter = async (filterOptions: ITransactionFilter) => {
+    try {
+      const id = user?.uid;
+      if (!id) {
+        return [];
+      }
+
+      const userRef = firebase.firestore().collection('users').doc(id);
+      const transactionsRef = userRef.collection('transactions');
+
+      let query: firebase.firestore.Query<firebase.firestore.DocumentData> =
+        transactionsRef;
+
+      if (filterOptions.tipo) {
+        query = query.where('tipo', '==', filterOptions.tipo);
+      }
+
+      if (filterOptions.titulo) {
+        query = query.where('titulo', '==', filterOptions.titulo);
+      }
+
+      if (filterOptions.dataInicial) {
+        query = query.where('data', '>=', filterOptions.dataInicial);
+      }
+
+      if (filterOptions.dataFinal) {
+        query = query.where('data', '<=', filterOptions.dataFinal);
+      }
+
+      const querySnapshot = await query.get();
+      const transactions: any[] = [];
+      querySnapshot.forEach((doc) => {
+        transactions.push(doc.data());
+      });
+      return transactions;
+    } catch (error) {
+      console.error('Error fetching transactions: ', error);
+      return [];
+    }
+  };
+
   useEffect(() => {
     if (user) {
       getUserData();
@@ -127,7 +261,11 @@ export function DBProvider({ children }: { children: ReactNode }) {
     userData,
     loading,
     getUserData,
-    updateUserData
+    updateUserData,
+    addProfessionalData,
+    getProfessionalData,
+    addTransaction,
+    getTransactionsByFilter
   };
 
   return (

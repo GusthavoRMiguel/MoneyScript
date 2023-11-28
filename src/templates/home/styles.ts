@@ -28,9 +28,9 @@ export const Container = styled.main`
     background-position-x: center;
   }
 
-  @media (max-width: 600px) {
-    .colored:nth-child(5) {
-      background: linear-gradient(to bottom, #e5e5e5 0, #e5e5e5 82%, white 18%);
+  @media (max-width: 620px) {
+    .colored:nth-child(4) {
+      background: linear-gradient(to bottom, #e5e5e5 0, #e5e5e5 85%, white 15%);
       background-size: cover;
       background-repeat: no-repeat;
       background-position-x: center;
@@ -42,4 +42,8 @@ export const Spacer = styled.div`
   height: 8vh;
   background-color: ${theme.colors.blackQuantum};
   z-index: 2;
+
+  @media (max-width: 620px) {
+    height: 14vh;
+  }
 `;

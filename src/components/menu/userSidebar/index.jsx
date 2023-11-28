@@ -27,6 +27,7 @@ const UserSidebar = ({ open, onClose }) => {
           {user ? (
             <>
               <Link href="/conta">Conta</Link>
+              <Link href="/dashboard">Dashboard</Link>
               <button onClick={handleLogout}>Sair</button>
             </>
           ) : (

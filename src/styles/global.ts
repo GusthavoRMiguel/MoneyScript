@@ -38,15 +38,21 @@ const GlobalStyles = createGlobalStyle`
     -moz-osx-font-smoothing: grayscale;
     scroll-behavior: smooth;
     ::-webkit-scrollbar-thumb {
-    background-color: ${theme.colors.gray_300};}
+    background-color: ${theme.colors.gray_300} !important;
+   }
     ::-webkit-scrollbar-track {
-    background-color: transparent; }
+    background-color: ${theme.colors.gray_50}!important;
+    border-radius: 35px !important;
+   }
     ::-webkit-scrollbar {
-    width: 4px;}
+    width: 10px !important;
+    border-radius: 35px !important;
+    }
 
     @media (max-width: 600px) {
      ::-webkit-scrollbar {
-    width: 1px;}
+       width: 1px !important;
+     }
 
   }
   }

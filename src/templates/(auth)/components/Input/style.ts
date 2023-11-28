@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const Container = styled.div`
   display: flex;
@@ -36,16 +36,17 @@ export const InputBox = styled.div`
   }
 
   input.fieldPass {
-    width: 85%;
+    width: 90%;
     padding: 8px;
     border-radius: 8px;
     border: solid 1px gray;
     outline: 0;
   }
 
-  button.btn {
+  button.btn,
+  button.btn:hover {
     background-color: transparent;
-    margin-left: 10px;
+    width: 8%;
   }
 `;
 

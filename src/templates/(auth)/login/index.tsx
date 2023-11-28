@@ -7,13 +7,13 @@ import * as S from './style';
 
 import { useAuth } from '@/hooks/Auth';
 
-import { FaGithub, FaGoogle } from 'react-icons/fa';
+import { FaGithub, FaGoogle, FaFacebook } from 'react-icons/fa';
 
 import Input from '../components/Input';
 import Button from '../components/Button';
 
 const LoginPage: React.FC = () => {
-  const { signinGitHub, signinGoogle, signinEmail } = useAuth();
+  const { signinGitHub, signinGoogle, signinEmail, signinFacebook } = useAuth();
 
   const handleSigninGithub = () => {
     signinGitHub();
@@ -21,6 +21,10 @@ const LoginPage: React.FC = () => {
 
   const handleSigninGoogle = () => {
     signinGoogle();
+  };
+
+  const handleSigninFacebook = () => {
+    signinFacebook();
   };
 
   const initalValues = {
@@ -66,6 +70,10 @@ const LoginPage: React.FC = () => {
               <S.IconButton type="button" onClick={handleSigninGoogle}>
                 <FaGoogle size={25} />
                 <p>Entrar com Google</p>
+              </S.IconButton>
+              <S.IconButton type="button" onClick={handleSigninFacebook}>
+                <FaFacebook size={25} />
+                <p>Entrar com Facebook</p>
               </S.IconButton>
               <S.IconButton type="button" onClick={handleSigninGithub}>
                 <FaGithub size={25} />

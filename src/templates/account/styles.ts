@@ -22,6 +22,10 @@ export const SideBar = styled.div`
   display: flex;
   flex-direction: column;
   padding-top: 2rem;
+
+  @media (max-width: 620px) {
+    width: 35%;
+  }
 `;
 
 export const SideButton = styled.button`
@@ -63,6 +67,12 @@ export const SideButton = styled.button`
     border: 20px 20px;
     color: ${theme.colors.white};
   }
+
+  @media (max-width: 620px) {
+    gap: 5px;
+    font-size: 0.5rem;
+    padding-left: 0.5rem;
+  }
 `;
 
 export const Content = styled.div`
@@ -79,11 +89,16 @@ export const Heading = styled.div`
   display: flex;
   padding: 1rem;
   gap: 10px;
+
+  @media (max-width: 620px) {
+    gap: 5px;
+    padding: 0.5rem;
+  }
 `;
 
 export const Avatar = styled.div`
   width: 7rem;
-  height: 7rem;
+  height: 8rem;
   border-radius: 10px;
   border: solid 1px ${theme.colors.gray_50};
 
@@ -92,6 +107,11 @@ export const Avatar = styled.div`
     border-radius: 10px;
     width: 100%;
     height: 100%;
+  }
+
+  @media (max-width: 620px) {
+    width: 3rem;
+    height: 4rem;
   }
 `;
 
@@ -105,6 +125,17 @@ export const Info = styled.div`
   }
   h2 {
     font-size: 1rem;
+  }
+
+  @media (max-width: 620px) {
+    gap: 5px;
+    h1 {
+      font-size: 0.7rem;
+    }
+
+    h2 {
+      font-size: 0.3rem;
+    }
   }
 `;
 
@@ -135,6 +166,24 @@ export const Link = styled.div`
 
   div button svg.verify {
     color: ${theme.colors.green};
+  }
+
+  @media (max-width: 620px) {
+    margin-right: 0.5rem;
+    padding: 0.5rem;
+    height: fit-content;
+
+    h1 {
+      font-size: 0.7rem;
+    }
+
+    div {
+      gap: 15px;
+    }
+    div button svg {
+      width: 15px;
+      height: 15px;
+    }
   }
 `;
 

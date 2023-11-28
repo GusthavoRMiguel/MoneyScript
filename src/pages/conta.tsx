@@ -1,9 +1,9 @@
-import Account from '@/templates/account';
+import AccountPage from '@/templates/account';
 
-export default function Login() {
+export default function Conta() {
   return (
     <>
-      <Account />
+      <AccountPage />
     </>
   );
 }

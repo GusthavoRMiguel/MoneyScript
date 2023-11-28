@@ -7,6 +7,7 @@ export const Container = styled.main`
   display: flex;
   place-content: center;
   align-items: center;
+  overflow-y: hidden;
 
   form.flexForm {
     display: flex;
@@ -18,6 +19,14 @@ export const Container = styled.main`
     border-color: skyblue;
     background-color: white;
   }
+
+  @media (max-width: 620px) {
+    height: 100%;
+    form.flexForm {
+      min-width: 90%;
+      margin-top: 25%;
+    }
+  }
 `;
 
 export const Flex = styled.div`
@@ -27,6 +36,7 @@ export const Flex = styled.div`
   padding: 10px;
   border-radius: 8px;
   justify-content: space-around;
+  gap: 5px;
 `;
 
 export const IconButton = styled.button`
@@ -36,4 +46,15 @@ export const IconButton = styled.button`
   display: flex;
   flex-direction: column;
   gap: 5px;
+
+  p {
+    font-size: 0.8rem;
+  }
+
+  @media (max-width: 620px) {
+    gap: 10px;
+    p {
+      font-size: 0.6rem;
+    }
+  }
 `;
