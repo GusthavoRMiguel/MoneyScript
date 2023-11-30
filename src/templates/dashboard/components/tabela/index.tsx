@@ -3,17 +3,11 @@ import * as S from './style';
 import ITransaction from '@/interfaces/ITransaction';
 
 interface TableProps {
-  filters: {
-    dataInicial: string;
-    dataFinal: string;
-    tipo: string;
-    titulo: string;
-  };
   movimentacoes: ITransaction[];
   loading: boolean;
 }
 
-const Tabela: React.FC<TableProps> = ({ filters, movimentacoes, loading }) => {
+const Tabela: React.FC<TableProps> = ({ movimentacoes, loading }) => {
   const [selectedDay, setSelectedDay] = useState<string>('');
 
   const renderDays = () => {

@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import Link from 'next/link';
 import React from 'react';
 import * as S from './styles';
 
@@ -23,7 +24,9 @@ const Menu: React.FC = () => {
     <S.Container>
       <S.Content>
         <S.BoxLogo>
-          <img src="/assets/logo.png" alt="logo" />
+          <Link href="/">
+            <img src="/assets/logo.png" alt="logo" />
+          </Link>
         </S.BoxLogo>
 
         <S.BoxIcon>

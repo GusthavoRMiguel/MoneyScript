@@ -1,14 +1,14 @@
-"use client";
-import React from "react";
-import Link from "next/link";
+'use client';
+import React from 'react';
+import Link from 'next/link';
 
-import { Overlay, SidebarContainer, CloseButton, Links } from "./styles";
+import { Overlay, SidebarContainer, CloseButton, Links } from './styles';
 import {
   AiOutlineHome,
   AiOutlineInfoCircle,
   AiOutlineComment,
-  AiOutlineClose,
-} from "react-icons/ai";
+  AiOutlineClose
+} from 'react-icons/ai';
 
 const Sidebar = ({ open, onClose }) => {
   return (
@@ -19,15 +19,15 @@ const Sidebar = ({ open, onClose }) => {
           <AiOutlineClose />
         </CloseButton>
         <Links>
-          <Link href={"/"}>
+          <Link href={'/'}>
             <AiOutlineHome />
             Home
           </Link>
-          <Link href={"/sobre"}>
+          <Link href={'/about'}>
             <AiOutlineInfoCircle />
             Sobre nós
           </Link>
-          <Link href={"contato"}>
+          <Link href={'contact'}>
             <AiOutlineComment /> Contato
           </Link>
         </Links>

@@ -6,6 +6,10 @@ export const Container = styled.div`
   height: 10vh;
   background-color: white;
   border: solid 1px ${theme.colors.blackQuantum};
+  @media (max-width: 640px) {
+    width: 100%;
+    height: auto;
+  }
 `;
 
 export const Icone = styled.div`
@@ -21,6 +25,12 @@ export const Icone = styled.div`
     gap: 10px;
     display: flex;
     align-items: center;
+  }
+
+  @media (max-width: 640px) {
+    button {
+      font-size: 1.5rem;
+    }
   }
 `;
 

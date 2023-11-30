@@ -38,8 +38,11 @@ export default {
     gray_300: '#343a40',
     gray_500: '#393b48',
     green: '#98d31f',
+    green_50: '#2eed2eb3',
     yellow_300: '#F1C40F',
-    red_300: '#FF6666',
+    red_50: '#db2828e6',
+    red_300: '#c50000eb',
+    red_400: '#dd0000',
     black: '#0D0D0D',
     blackQuantum: '#111111',
     overlay: 'rgba(0, 0, 0, 0.2)'

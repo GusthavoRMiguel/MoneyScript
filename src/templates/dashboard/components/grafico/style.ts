@@ -1,8 +1,20 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
+import { FaSpinner } from 'react-icons/fa';
+import theme from '@/styles/theme';
+
+const spin = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`;
 
 export const Container = styled.div`
   width: 50%;
-  height: 100%;
+  height: 50vh;
+  border: solid 1px ${theme.colors.blackQuantum};
+  @media (max-width: 640px) {
+    width: 100%;
+    height: auto;
+  }
 `;
 
 export const Content = styled.div`
@@ -45,4 +57,15 @@ export const TooltipContainer = styled.div`
     color: white;
     padding: 0.5rem;
   }
+`;
+
+export const ErrorMessage = styled.div`
+  padding: 1rem;
+  font-size: 1rem;
+`;
+
+export const LoadingIcon = styled(FaSpinner)`
+  font-size: 32px;
+  color: #333;
+  animation: ${spin} 1s linear infinite;
 `;

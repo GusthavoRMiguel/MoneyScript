@@ -26,12 +26,10 @@ const Grafico: React.FC<GraphProps> = ({ movimentacoes, loading }) => {
       );
 
       const totalValue = transactionsOnDate.reduce(
-        (total, movimentacao) =>
-          movimentacao.tipo === 'saida'
-            ? total - Number(movimentacao.valor)
-            : total + Number(movimentacao.valor),
+        (total, movimentacao) => total + Number(movimentacao.valor),
         0
       );
+
       return (
         <S.TooltipContainer>
           <h1>
@@ -40,7 +38,7 @@ const Grafico: React.FC<GraphProps> = ({ movimentacoes, loading }) => {
           {transactionsOnDate.map((movimentacao, index) => (
             <div
               key={index}
-              className={movimentacao.tipo === 'entrada' ? 'entrada' : 'saida'}
+              className={movimentacao.valor < 0 ? 'saida' : 'entrada'}
             >
               <p>Valor: R$ {movimentacao.valor}</p>
               <p>Tipo: {movimentacao.tipo}</p>
@@ -64,42 +62,44 @@ const Grafico: React.FC<GraphProps> = ({ movimentacoes, loading }) => {
 
     if (existingItem) {
       existingItem.valor += Number(valor);
-      existingItem.tipo.push(movimentacao.tipo); // Adiciona o tipo à lista
     } else {
-      acc.push({ data, valor: Number(valor), tipo: [movimentacao.tipo] });
+      acc.push({ data, valor: Number(valor) });
     }
 
     return acc;
   }, []);
 
-  const calculateFillColor = (movimentacoes: ITransaction[]): string => {
-    const totalValue = movimentacoes.reduce(
-      (total, movimentacao) =>
-        movimentacao.tipo === 'saida'
-          ? total - Number(movimentacao.valor)
-          : total + Number(movimentacao.valor),
-      0
+  const calculateFillColor = (movimentacoesPorDia: any[]): string => {
+    const hasNegative = movimentacoesPorDia.some(
+      (movimentacao) => movimentacao.valor < 0
     );
 
-    return totalValue >= 0 ? '#2eed2eb3' : '#db2828cc';
+    return hasNegative ? '#db2828cc' : '#2eed2eb3';
   };
 
-  const fillColor = calculateFillColor(movimentacoes);
+  const fillColor = calculateFillColor(groupDataByDate);
+
   return (
     <S.Container>
       <S.Content>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart
-            data={groupDataByDate}
-            margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
-          >
-            <XAxis dataKey="data" />
-            <YAxis />
-            <CartesianGrid strokeDasharray="3 3" />
-            <Tooltip content={renderTooltip} />
-            <Bar dataKey="valor" stroke="#8884d8" fill={fillColor} />
-          </BarChart>
-        </ResponsiveContainer>
+        {loading ? (
+          <S.LoadingIcon />
+        ) : groupDataByDate.length === 0 ? (
+          <S.ErrorMessage>Sem dados disponíveis</S.ErrorMessage>
+        ) : (
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart
+              data={groupDataByDate}
+              margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
+            >
+              <XAxis dataKey="data" />
+              <YAxis />
+              <CartesianGrid strokeDasharray="3 3" />
+              <Tooltip content={renderTooltip} />
+              <Bar dataKey="valor" stroke={fillColor} fill={fillColor} />
+            </BarChart>
+          </ResponsiveContainer>
+        )}
       </S.Content>
     </S.Container>
   );

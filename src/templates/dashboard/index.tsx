@@ -78,11 +78,7 @@ const DashboardPage: React.FC = () => {
       </S.Flex>
       <S.Content>
         <S.Flex>
-          <Tabela
-            filters={filterOptions}
-            movimentacoes={movimentacoes}
-            loading={loading}
-          />
+          <Tabela movimentacoes={movimentacoes} loading={loading} />
           <Grafico movimentacoes={movimentacoes} loading={loading} />
         </S.Flex>
 

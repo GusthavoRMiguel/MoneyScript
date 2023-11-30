@@ -12,6 +12,7 @@ interface AddRecordProps {
 const AddMovimentacao: React.FC<AddRecordProps> = ({ onSubmit }) => {
   const [showPopup, setShowPopup] = useState(false);
   const [movimentacao, setMovimentacao] = useState<ITransaction>({
+    id: '',
     data: '',
     tipo: 'entrada',
     titulo: 'salario',
@@ -25,7 +26,15 @@ const AddMovimentacao: React.FC<AddRecordProps> = ({ onSubmit }) => {
   ) => {
     const { name, value } = e.target;
 
-    setMovimentacao({ ...movimentacao, [name]: value });
+    if (name === 'tipo' && value === 'entrada') {
+      setMovimentacao({
+        ...movimentacao,
+        [name]: value,
+        valor: -Math.abs(movimentacao.valor || 0)
+      });
+    } else {
+      setMovimentacao({ ...movimentacao, [name]: value });
+    }
   };
 
   const validationSchema = Yup.object().shape({
@@ -71,6 +80,7 @@ const AddMovimentacao: React.FC<AddRecordProps> = ({ onSubmit }) => {
       await validationSchema.validate(movimentacao, { abortEarly: false });
       onSubmit(movimentacao);
       setMovimentacao({
+        id: '',
         data: '',
         tipo: 'entrada',
         titulo: 'salario',

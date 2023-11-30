@@ -30,6 +30,7 @@ interface DBContextProps {
   getTransactionsByFilter: (
     filterOptions: ITransactionFilter
   ) => Promise<any[]>;
+  removeTransaction: (transactionId: string) => Promise<void>;
 }
 
 const DBContext = createContext<DBContextProps | undefined>(undefined);
@@ -239,14 +240,38 @@ export function DBProvider({ children }: { children: ReactNode }) {
       }
 
       const querySnapshot = await query.get();
-      const transactions: any[] = [];
+      const transactions: ITransaction[] = [];
+
       querySnapshot.forEach((doc) => {
-        transactions.push(doc.data());
+        const transactionData = doc.data() as ITransaction;
+        const transactionId = doc.id;
+        const transactionWithId = { ...transactionData, id: transactionId };
+        transactions.push(transactionWithId);
       });
+
       return transactions;
     } catch (error) {
       console.error('Error fetching transactions: ', error);
       return [];
+    }
+  };
+
+  const removeTransaction = async (transactionId: string) => {
+    try {
+      const id = user?.uid;
+      if (!id) {
+        throw new Error('User not authenticated');
+      }
+
+      const userRef = firebase.firestore().collection('users').doc(id);
+      const transactionRef = userRef
+        .collection('transactions')
+        .doc(transactionId);
+
+      await transactionRef.delete();
+    } catch (error) {
+      console.error('Error removing transaction:', error);
+      throw error;
     }
   };
 
@@ -265,7 +290,8 @@ export function DBProvider({ children }: { children: ReactNode }) {
     addProfessionalData,
     getProfessionalData,
     addTransaction,
-    getTransactionsByFilter
+    getTransactionsByFilter,
+    removeTransaction
   };
 
   return (
