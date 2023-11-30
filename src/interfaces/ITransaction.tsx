@@ -4,7 +4,7 @@ interface ITransaction {
   tipo: string;
   titulo: string;
   descricao: string;
-  valor: number;
+  valor: number | undefined;
 }
 
 export default ITransaction;

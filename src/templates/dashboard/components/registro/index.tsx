@@ -14,10 +14,10 @@ const AddMovimentacao: React.FC<AddRecordProps> = ({ onSubmit }) => {
   const [movimentacao, setMovimentacao] = useState<ITransaction>({
     id: '',
     data: '',
-    tipo: 'entrada',
-    titulo: 'salario',
+    tipo: '',
+    titulo: '',
     descricao: '',
-    valor: 0
+    valor: undefined
   });
   const [errors, setErrors] = useState<Partial<ITransaction>>({});
 
@@ -25,16 +25,7 @@ const AddMovimentacao: React.FC<AddRecordProps> = ({ onSubmit }) => {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-
-    if (name === 'tipo' && value === 'entrada') {
-      setMovimentacao({
-        ...movimentacao,
-        [name]: value,
-        valor: -Math.abs(movimentacao.valor || 0)
-      });
-    } else {
-      setMovimentacao({ ...movimentacao, [name]: value });
-    }
+    setMovimentacao({ ...movimentacao, [name]: value });
   };
 
   const validationSchema = Yup.object().shape({
@@ -77,15 +68,25 @@ const AddMovimentacao: React.FC<AddRecordProps> = ({ onSubmit }) => {
     e.preventDefault();
 
     try {
-      await validationSchema.validate(movimentacao, { abortEarly: false });
-      onSubmit(movimentacao);
+      const movimentacaoAtualizada = { ...movimentacao };
+
+      if (movimentacaoAtualizada.tipo === 'saida') {
+        movimentacaoAtualizada.valor = -(
+          Math.abs(Number(movimentacaoAtualizada.valor)) || 0
+        );
+      }
+
+      await validationSchema.validate(movimentacaoAtualizada, {
+        abortEarly: false
+      });
+      onSubmit(movimentacaoAtualizada);
       setMovimentacao({
         id: '',
         data: '',
-        tipo: 'entrada',
-        titulo: 'salario',
+        tipo: '',
+        titulo: '',
         descricao: '',
-        valor: 0
+        valor: undefined
       });
     } catch (error) {
       if (error instanceof Yup.ValidationError) {

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import * as S from './style';
 import ITransaction from '@/interfaces/ITransaction';
+import { IoIosCloseCircle } from 'react-icons/io';
 
 interface TableProps {
   movimentacoes: ITransaction[];
@@ -11,8 +12,6 @@ const Tabela: React.FC<TableProps> = ({ movimentacoes, loading }) => {
   const [selectedDay, setSelectedDay] = useState<string>('');
 
   const renderDays = () => {
-    // Lógica para renderizar os dias do calendário
-    // Vamos simular com um array para representar os dias
     const daysArray = Array.from({ length: 31 }, (_, i) => i + 1);
 
     return daysArray.map((day) => (
@@ -32,28 +31,20 @@ const Tabela: React.FC<TableProps> = ({ movimentacoes, loading }) => {
   };
 
   const calculateBlockBalance = () => {
-    // Lógica para calcular o saldo dos blocos do calendário
-    // Aqui, simularemos um saldo aleatório para demonstração
     return Math.random() > 0.5 ? 'positivo' : 'negativo';
   };
 
   const handleDayClick = (day: number) => {
-    // Lógica para abrir o popup com detalhes da movimentação do dia
     setSelectedDay(`Detalhes do dia ${day}`);
   };
 
   return (
     <S.Container>
       <div>
-        {/* Botões para navegação por dias, semanas, meses ou anos */}
         <div>
-          <button>Dias</button>
-          <button>Semanas</button>
-          <button>Meses</button>
-          <button>Anos</button>
+          <button>Mês Atual</button>
         </div>
 
-        {/* Blocos do calendário */}
         <div
           style={{
             display: 'grid',
@@ -65,17 +56,15 @@ const Tabela: React.FC<TableProps> = ({ movimentacoes, loading }) => {
           {renderDays()}
         </div>
 
-        {/* Popup com detalhes do dia */}
         {selectedDay && (
-          <div
-            style={{
-              border: '1px solid #ccc',
-              padding: '10px',
-              marginTop: '20px'
-            }}
-          >
-            {selectedDay}
-          </div>
+          <S.PopupOverlay onClick={() => setSelectedDay('')}>
+            <S.Popup>
+              <button onClick={() => setSelectedDay('')}>
+                <IoIosCloseCircle size={20} />
+              </button>
+              <div> {selectedDay}</div>
+            </S.Popup>
+          </S.PopupOverlay>
         )}
       </div>
     </S.Container>

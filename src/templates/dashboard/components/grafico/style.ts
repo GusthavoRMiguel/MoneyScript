@@ -11,6 +11,7 @@ export const Container = styled.div`
   width: 50%;
   height: 50vh;
   border: solid 1px ${theme.colors.blackQuantum};
+
   @media (max-width: 640px) {
     width: 100%;
     height: auto;

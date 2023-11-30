@@ -11,7 +11,6 @@ interface FilterProps {
 const Filtro: React.FC<FilterProps> = ({ onApplyFilter }) => {
   const [showFilter, setShowFilter] = useState<boolean>(false);
 
-  const [tipoPeriodo, setTipoPeriodo] = useState<string>('');
   const [intervaloData, setIntervaloData] = useState<{
     inicio: Date;
     fim: Date;
@@ -23,14 +22,6 @@ const Filtro: React.FC<FilterProps> = ({ onApplyFilter }) => {
   const [tipoEntrada, setTipoEntrada] = useState<string>('Salário');
   const [tipoSaida, setTipoSaida] = useState<string>('Conta de Luz');
 
-  const opcoesPeriodo = [
-    { key: 'm', text: 'Mensal', value: 'mensal' },
-    { key: 't', text: 'Trimestral', value: 'trimestral' },
-    { key: 's', text: 'Semestral', value: 'semestral' },
-    { key: 'a', text: 'Anual', value: 'anual' },
-    { key: 'o', text: 'Outros', value: 'outros' }
-  ];
-
   const opcoesMostrarValores = [
     { key: 't', text: 'Todos', value: 'todos' },
     { key: 'e', text: 'Somente Entradas', value: 'entradas' },
@@ -38,19 +29,20 @@ const Filtro: React.FC<FilterProps> = ({ onApplyFilter }) => {
   ];
 
   const opcoesTipoEntrada = [
+    { key: 'todasEntradas', text: 'Todas as Entradas', value: '' },
     { key: 'salario', text: 'Salário', value: 'Salário' },
     { key: 'bonus', text: 'Bônus', value: 'Bônus' },
     { key: 'outraEntrada', text: 'Outra Entrada', value: 'Outra Entrada' }
   ];
 
   const opcoesTipoSaida = [
+    { key: 'todasSaidas', text: 'Todas as Saídas', value: '' },
     { key: 'contaLuz', text: 'Conta de Luz', value: 'Conta de Luz' },
     { key: 'agua', text: 'Conta de Água', value: 'Conta de Água' },
     { key: 'outraSaida', text: 'Outra Saída', value: 'Outra Saída' }
   ];
 
   const schemaFiltro = Yup.object().shape({
-    tipoPeriodo: Yup.string().required('O tipo de período é obrigatório'),
     mostrarValores: Yup.string().required('A exibição é obrigatória'),
     tipoEntrada: Yup.string(),
     tipoSaida: Yup.string(),
@@ -68,8 +60,6 @@ const Filtro: React.FC<FilterProps> = ({ onApplyFilter }) => {
   const aplicarFiltro = async () => {
     try {
       const parametrosFiltro = {
-        tipoPeriodo,
-        intervaloData: tipoPeriodo === 'outros' ? intervaloData : null,
         mostrarValores,
         tipoEntrada: mostrarValores === 'entradas' ? tipoEntrada : null,
         tipoSaida: mostrarValores === 'saidas' ? tipoSaida : null
@@ -95,16 +85,6 @@ const Filtro: React.FC<FilterProps> = ({ onApplyFilter }) => {
       ) : (
         <S.Content>
           <Form>
-            <Form.Field>
-              <label>Tipo de Período</label>
-              <Dropdown
-                selection
-                options={opcoesPeriodo}
-                placeholder="Selecione o tipo de período"
-                onChange={(e, { value }) => setTipoPeriodo(value as string)}
-              />
-            </Form.Field>
-
             <Form.Group widths="equal">
               <Form.Field>
                 <label>Data de Início</label>

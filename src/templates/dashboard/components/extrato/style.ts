@@ -77,6 +77,8 @@ export const TableData = styled.td`
 `;
 
 export const CustomConfirm = styled(Confirm)`
+  background-color: ${theme.colors.overlay} !important;
+
   button.custom-confirm-button {
     background-color: ${theme.colors.red_300} !important;
   }

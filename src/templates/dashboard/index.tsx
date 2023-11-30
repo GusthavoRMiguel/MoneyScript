@@ -67,7 +67,7 @@ const DashboardPage: React.FC = () => {
     };
 
     getDefaultTransactions();
-  }, []);
+  }, [getTransactionsByFilter]);
 
   return (
     <S.Container>
@@ -81,7 +81,6 @@ const DashboardPage: React.FC = () => {
           <Tabela movimentacoes={movimentacoes} loading={loading} />
           <Grafico movimentacoes={movimentacoes} loading={loading} />
         </S.Flex>
-
         <Extrato movimentacoes={movimentacoes} loading={loading} />
       </S.Content>
     </S.Container>

@@ -35,21 +35,23 @@ const Extrato: React.FC<ExtratoProps> = ({ movimentacoes, loading }) => {
 
     if (sortField === 'valor') {
       sortedList.sort((a, b) => {
+        const valorA = a.valor || 0;
+        const valorB = b.valor || 0;
+
         if (sortField === sortBy) {
-          return sortDirection === 'asc'
-            ? a.valor - b.valor
-            : b.valor - a.valor;
+          return sortDirection === 'asc' ? valorA - valorB : valorB - valorA;
         }
-        return a.valor - b.valor;
+        return valorA - valorB;
       });
     } else if (sortField === 'data') {
       sortedList.sort((a, b) => {
+        const dateA = new Date(a.data).getTime();
+        const dateB = new Date(b.data).getTime();
+
         if (sortField === sortBy) {
-          return sortDirection === 'asc'
-            ? new Date(a.data).getTime() - new Date(b.data).getTime()
-            : new Date(b.data).getTime() - new Date(a.data).getTime();
+          return sortDirection === 'asc' ? dateA - dateB : dateB - dateA;
         }
-        return new Date(a.data).getTime() - new Date(b.data).getTime();
+        return dateA - dateB;
       });
     }
 

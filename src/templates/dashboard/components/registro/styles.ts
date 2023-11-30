@@ -47,6 +47,9 @@ export const Content = styled.div`
   form {
     width: 100%;
   }
+  @media (max-width: 640px) {
+    width: 100%;
+  }
 `;
 
 export const Flex = styled.div`

@@ -38,7 +38,11 @@ const Grafico: React.FC<GraphProps> = ({ movimentacoes, loading }) => {
           {transactionsOnDate.map((movimentacao, index) => (
             <div
               key={index}
-              className={movimentacao.valor < 0 ? 'saida' : 'entrada'}
+              className={
+                movimentacao.valor !== undefined && movimentacao.valor < 0
+                  ? 'saida'
+                  : 'entrada'
+              }
             >
               <p>Valor: R$ {movimentacao.valor}</p>
               <p>Tipo: {movimentacao.tipo}</p>
@@ -58,45 +62,46 @@ const Grafico: React.FC<GraphProps> = ({ movimentacoes, loading }) => {
 
   const groupDataByDate = movimentacoes.reduce((acc: any, movimentacao) => {
     const { data, valor } = movimentacao;
-    const existingItem = acc.find((item: any) => item.data === data);
+    const existingItemIndex = acc.findIndex((item: any) => item.data === data);
 
-    if (existingItem) {
-      existingItem.valor += Number(valor);
+    if (existingItemIndex !== -1) {
+      acc[existingItemIndex].valor += Number(valor);
     } else {
-      acc.push({ data, valor: Number(valor) });
+      acc.push({
+        data,
+        valor: Number(valor)
+      });
     }
 
     return acc;
   }, []);
 
-  const calculateFillColor = (movimentacoesPorDia: any[]): string => {
-    const hasNegative = movimentacoesPorDia.some(
-      (movimentacao) => movimentacao.valor < 0
-    );
-
-    return hasNegative ? '#db2828cc' : '#2eed2eb3';
-  };
-
-  const fillColor = calculateFillColor(groupDataByDate);
+  const coloredData = groupDataByDate.map((item: any) => {
+    return {
+      ...item,
+      fill: item.valor > 0 ? '#2eed2eb3' : '#db2828cc'
+    };
+  });
 
   return (
     <S.Container>
       <S.Content>
         {loading ? (
           <S.LoadingIcon />
-        ) : groupDataByDate.length === 0 ? (
+        ) : coloredData.length === 0 ? (
           <S.ErrorMessage>Sem dados disponíveis</S.ErrorMessage>
         ) : (
           <ResponsiveContainer width="100%" height={300}>
             <BarChart
-              data={groupDataByDate}
+              style={{ zIndex: 1 }}
+              data={coloredData}
               margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
             >
               <XAxis dataKey="data" />
-              <YAxis />
+              <YAxis tickCount={10} />
               <CartesianGrid strokeDasharray="3 3" />
               <Tooltip content={renderTooltip} />
-              <Bar dataKey="valor" stroke={fillColor} fill={fillColor} />
+              <Bar dataKey="valor" />
             </BarChart>
           </ResponsiveContainer>
         )}
