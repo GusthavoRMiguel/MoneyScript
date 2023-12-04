@@ -1,5 +1,4 @@
 interface ITransaction {
-  id: string;
   data: string;
   tipo: string;
   titulo: string;

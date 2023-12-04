@@ -1,6 +1,6 @@
 interface ITransactionFilter {
-  dataInicial?: string;
-  dataFinal?: string;
+  dataInicial: string;
+  dataFinal: string;
   tipo?: string;
   titulo?: string;
 }

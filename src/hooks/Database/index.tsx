@@ -211,6 +211,7 @@ export function DBProvider({ children }: { children: ReactNode }) {
   };
 
   const getTransactionsByFilter = async (filterOptions: ITransactionFilter) => {
+    console.log('hook', filterOptions);
     try {
       const id = user?.uid;
       if (!id) {
@@ -223,6 +224,12 @@ export function DBProvider({ children }: { children: ReactNode }) {
       let query: firebase.firestore.Query<firebase.firestore.DocumentData> =
         transactionsRef;
 
+      if (filterOptions.dataInicial && filterOptions.dataFinal) {
+        query = query
+          .where('data', '>=', filterOptions.dataInicial)
+          .where('data', '<=', filterOptions.dataFinal);
+      }
+
       if (filterOptions.tipo) {
         query = query.where('tipo', '==', filterOptions.tipo);
       }
@@ -231,13 +238,7 @@ export function DBProvider({ children }: { children: ReactNode }) {
         query = query.where('titulo', '==', filterOptions.titulo);
       }
 
-      if (filterOptions.dataInicial) {
-        query = query.where('data', '>=', filterOptions.dataInicial);
-      }
-
-      if (filterOptions.dataFinal) {
-        query = query.where('data', '<=', filterOptions.dataFinal);
-      }
+      query = query.orderBy('data', 'desc');
 
       const querySnapshot = await query.get();
       const transactions: ITransaction[] = [];

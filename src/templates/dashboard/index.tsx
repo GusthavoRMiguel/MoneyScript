@@ -1,3 +1,4 @@
+'use client';
 import React, { useState, useEffect } from 'react';
 import * as S from './style';
 import { useDB } from '@/hooks/Database';
@@ -27,7 +28,8 @@ const DashboardPage: React.FC = () => {
     try {
       const transactions = await getTransactionsByFilter(filtros);
       setMovimentacoes(transactions);
-      setFilterOptions(filtros); // Atualizando os filtros
+      setFilterOptions(filtros);
+      console.log('handleChamado', filtros);
     } catch (error) {
       console.error('Erro ao filtrar movimentações:', error);
     } finally {
@@ -58,12 +60,12 @@ const DashboardPage: React.FC = () => {
 
       const defaultFilterOptions: ITransactionFilter = {
         dataInicial: `${year}-${formattedMonth}-01`,
-        dataFinal: `${year}-${formattedMonth}-31`,
-        tipo: '',
-        titulo: ''
+        dataFinal: `${year}-${formattedMonth}-31`
       };
 
       await handleApplyFilter(defaultFilterOptions);
+
+      console.log('Useffect chamado:', defaultFilterOptions);
     };
 
     getDefaultTransactions();
