@@ -80,7 +80,10 @@ const Extrato: React.FC<ExtratoProps> = ({ movimentacoes, loading }) => {
   const handleConfirmRemove = async () => {
     try {
       await removeTransaction(transactionToRemove);
-      const updatedTransactions = await getTransactionsByFilter({});
+      const updatedTransactions = await getTransactionsByFilter({
+        dataInicial: '',
+        dataFinal: ''
+      });
       setSortedMovimentacoes(updatedTransactions);
       setOpenConfirmation(false);
     } catch (error) {

@@ -7,7 +7,7 @@ import ITransaction from '@/interfaces/ITransaction';
 
 import Menu from '@/components/menu';
 import Filtro from './components/filtro';
-import Tabela from './components/tabela';
+import Calendario from './components/calendario';
 import Grafico from './components/grafico';
 import Extrato from './components/extrato';
 import AddMovimentacao from './components/registro';
@@ -64,8 +64,6 @@ const DashboardPage: React.FC = () => {
       };
 
       await handleApplyFilter(defaultFilterOptions);
-
-      console.log('Useffect chamado:', defaultFilterOptions);
     };
 
     getDefaultTransactions();
@@ -80,7 +78,7 @@ const DashboardPage: React.FC = () => {
       </S.Flex>
       <S.Content>
         <S.Flex>
-          <Tabela movimentacoes={movimentacoes} loading={loading} />
+          <Calendario movimentacoes={movimentacoes} loading={loading} />
           <Grafico movimentacoes={movimentacoes} loading={loading} />
         </S.Flex>
         <Extrato movimentacoes={movimentacoes} loading={loading} />

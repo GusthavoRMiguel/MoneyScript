@@ -6,7 +6,6 @@ import { Overlay, SidebarContainer, CloseButton, Links } from './styles';
 import {
   AiOutlineHome,
   AiOutlineInfoCircle,
-  AiOutlineComment,
   AiOutlineClose
 } from 'react-icons/ai';
 
@@ -26,9 +25,6 @@ const Sidebar = ({ open, onClose }) => {
           <Link href={'/about'}>
             <AiOutlineInfoCircle />
             Sobre nós
-          </Link>
-          <Link href={'contact'}>
-            <AiOutlineComment /> Contato
           </Link>
         </Links>
       </SidebarContainer>
