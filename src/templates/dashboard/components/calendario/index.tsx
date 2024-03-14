@@ -4,7 +4,8 @@ import {
   CalendarButton,
   CalendarDay,
   CalendarGrid,
-  CalendarHeader
+  CalendarHeader,
+  DetailCard
 } from './style';
 import { Button, Modal } from 'semantic-ui-react';
 import ITransaction from '@/interfaces/ITransaction';
@@ -141,14 +142,17 @@ const Calendario: React.FC<Props> = ({ movimentacoes, loading }) => {
             <p>Detalhamento das movimentações :</p>
             <ul>
               {getTransactionsForSelectedDay().map((transaction, index) => (
-                <li key={index}>
-                  <div>
-                    <p>Titulo:{transaction.titulo}</p>
-                    <p>Descrição: {transaction.descricao}</p>
-                    <p>Tipo: {transaction.tipo}</p>
-                    <p>Valor: {transaction.valor}</p>
-                  </div>
-                </li>
+                <DetailCard
+                  key={index}
+                  className={
+                    transaction.tipo === 'entrada' ? 'entrada' : 'saida'
+                  }
+                >
+                  <p>Titulo:{transaction.titulo}</p>
+                  <p>Descrição: {transaction.descricao}</p>
+                  <p>Tipo: {transaction.tipo}</p>
+                  <p>Valor: {transaction.valor}</p>
+                </DetailCard>
               ))}
             </ul>
           </Modal.Content>

@@ -183,7 +183,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       localStorage.removeItem('tempUID');
 
-      Router.push('/login');
+      Router.push('/');
     } catch (error) {
       console.error('Erro ao salvar informações adicionais do usuário:', error);
     }
@@ -197,7 +197,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .signInWithEmailAndPassword(email, password);
       handleUser(response.user);
       console.log(response.user);
-      Router.push('/conta');
+      Router.push('/dashboard');
     } catch (error) {
       console.error('Erro ao fazer login com email e senha:', error);
       setLoading(false);
@@ -228,7 +228,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         await updateUserData(userFromResponse);
         handleUser(response.user);
-        Router.push('/conta');
+        Router.push('/dashboard');
       } else {
         console.error('Usuário nulo ao fazer login com GitHub');
         setLoading(false);
@@ -294,7 +294,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await updateUserData(userFromResponse);
         handleUser(response.user);
         console.log(response.user, userFromResponse);
-        Router.push('/conta');
+        Router.push('/dashboard');
       } else {
         console.error('Usuário nulo ao fazer login com Google');
         setLoading(false);
@@ -358,7 +358,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         await updateUserData(userFromResponse);
         handleUser(response.user);
-        Router.push('/conta');
+        Router.push('/dashboard');
       } else {
         console.error('Usuário nulo ao fazer login com Facebook');
         setLoading(false);

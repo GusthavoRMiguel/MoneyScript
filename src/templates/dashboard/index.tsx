@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import * as S from './style';
+import * as S from './styles';
 import { useDB } from '@/hooks/Database';
 import ITransactionFilter from '@/interfaces/ITransactionFilter';
 import ITransaction from '@/interfaces/ITransaction';
@@ -72,16 +72,17 @@ const DashboardPage: React.FC = () => {
   return (
     <S.Container>
       <Menu />
-      <S.Flex>
-        <Filtro onApplyFilter={handleApplyFilter} />
-        <AddMovimentacao onSubmit={handleAddTransaction} />
-      </S.Flex>
+
       <S.Content>
+        <S.SideBar>
+          <Filtro onApplyFilter={handleApplyFilter} />
+          <AddMovimentacao onSubmit={handleAddTransaction} />
+        </S.SideBar>
         <S.Flex>
           <Calendario movimentacoes={movimentacoes} loading={loading} />
-          <Grafico movimentacoes={movimentacoes} loading={loading} />
+          <Grafico movimentacoes={movimentacoes} loading={loading} />{' '}
+          <Extrato movimentacoes={movimentacoes} loading={loading} />
         </S.Flex>
-        <Extrato movimentacoes={movimentacoes} loading={loading} />
       </S.Content>
     </S.Container>
   );

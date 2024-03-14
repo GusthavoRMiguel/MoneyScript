@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import * as S from './styles';
 import ITransaction from '@/interfaces/ITransaction';
-import { Dropdown, Form, Button } from 'semantic-ui-react';
+import { Dropdown, Form, Button, Accordion } from 'semantic-ui-react';
 import { BsCashCoin } from 'react-icons/bs';
 import * as Yup from 'yup';
 
@@ -10,7 +10,7 @@ interface AddRecordProps {
 }
 
 const AddMovimentacao: React.FC<AddRecordProps> = ({ onSubmit }) => {
-  const [showPopup, setShowPopup] = useState(false);
+  const [activeIndex, setActiveIndex] = useState<number>(0);
   const [movimentacao, setMovimentacao] = useState<ITransaction>({
     id: '',
     data: '',
@@ -108,95 +108,101 @@ const AddMovimentacao: React.FC<AddRecordProps> = ({ onSubmit }) => {
     }
   };
 
+  const handleAccordionClick = (index: number) => {
+    setActiveIndex(activeIndex === index ? -1 : index);
+  };
+
   return (
     <S.Container>
-      {!showPopup ? (
-        <S.Icone>
-          <button onClick={() => setShowPopup(true)}>
-            Adicionar Movimentação <BsCashCoin />
-          </button>
-        </S.Icone>
-      ) : (
-        <S.Content>
-          <Form onSubmit={handleSubmit}>
-            <Form.Field error={!!errors.data}>
-              <label>Data:</label>
-              <input
-                type="date"
-                name="data"
-                value={movimentacao.data}
-                onChange={handleInputChange}
-              />
-              {errors.data && <S.ErrorMessage>{errors.data}</S.ErrorMessage>}
-            </Form.Field>
+      <S.Content>
+        <Accordion styled fluid>
+          <Accordion.Title
+            active={activeIndex === 0}
+            index={0}
+            onClick={() => handleAccordionClick(0)}
+          >
+            <h1>Adicionar Transação</h1>
+          </Accordion.Title>
+          <Accordion.Content active={activeIndex === 0}>
+            <Form onSubmit={handleSubmit}>
+              <Form.Field error={!!errors.data}>
+                <label>Data:</label>
+                <input
+                  type="date"
+                  name="data"
+                  value={movimentacao.data}
+                  onChange={handleInputChange}
+                />
+                {errors.data && <S.ErrorMessage>{errors.data}</S.ErrorMessage>}
+              </Form.Field>
 
-            <Form.Field error={!!errors.tipo}>
-              <label>Tipo:</label>
-              <Dropdown
-                selection
-                name="tipo"
-                options={tipoOptions}
-                value={movimentacao.tipo}
-                onChange={(e, { value }) =>
-                  handleInputChange({
-                    target: { name: 'tipo', value }
-                  } as React.ChangeEvent<HTMLInputElement>)
-                }
-              />
-              {errors.tipo && <S.ErrorMessage>{errors.tipo}</S.ErrorMessage>}
-            </Form.Field>
+              <Form.Field error={!!errors.tipo}>
+                <label>Tipo:</label>
+                <Dropdown
+                  selection
+                  name="tipo"
+                  options={tipoOptions}
+                  value={movimentacao.tipo}
+                  onChange={(e, { value }) =>
+                    handleInputChange({
+                      target: { name: 'tipo', value }
+                    } as React.ChangeEvent<HTMLInputElement>)
+                  }
+                />
+                {errors.tipo && <S.ErrorMessage>{errors.tipo}</S.ErrorMessage>}
+              </Form.Field>
 
-            <Form.Field error={!!errors.titulo}>
-              <label>Subtipo:</label>
-              <Dropdown
-                selection
-                name="titulo"
-                options={subtipoOptions}
-                value={movimentacao.titulo}
-                onChange={(e, { value }) =>
-                  handleInputChange({
-                    target: { name: 'titulo', value }
-                  } as React.ChangeEvent<HTMLInputElement>)
-                }
-              />
-              {errors.titulo && (
-                <S.ErrorMessage>{errors.titulo}</S.ErrorMessage>
-              )}
-            </Form.Field>
+              <Form.Field error={!!errors.titulo}>
+                <label>Subtipo:</label>
+                <Dropdown
+                  selection
+                  name="titulo"
+                  options={subtipoOptions}
+                  value={movimentacao.titulo}
+                  onChange={(e, { value }) =>
+                    handleInputChange({
+                      target: { name: 'titulo', value }
+                    } as React.ChangeEvent<HTMLInputElement>)
+                  }
+                />
+                {errors.titulo && (
+                  <S.ErrorMessage>{errors.titulo}</S.ErrorMessage>
+                )}
+              </Form.Field>
 
-            <Form.Field error={!!errors.descricao}>
-              <label>Descrição:</label>
-              <input
-                type="text"
-                name="descricao"
-                value={movimentacao.descricao}
-                onChange={handleInputChange}
-              />
-              {errors.descricao && (
-                <S.ErrorMessage>{errors.descricao}</S.ErrorMessage>
-              )}
-            </Form.Field>
+              <Form.Field error={!!errors.descricao}>
+                <label>Descrição:</label>
+                <input
+                  type="text"
+                  name="descricao"
+                  value={movimentacao.descricao}
+                  onChange={handleInputChange}
+                />
+                {errors.descricao && (
+                  <S.ErrorMessage>{errors.descricao}</S.ErrorMessage>
+                )}
+              </Form.Field>
 
-            <Form.Field error={!!errors.valor}>
-              <label>Valor:</label>
-              <input
-                type="number"
-                name="valor"
-                value={movimentacao.valor}
-                onChange={handleInputChange}
-              />
-              {errors.valor && <S.ErrorMessage>{errors.valor}</S.ErrorMessage>}
-            </Form.Field>
+              <Form.Field error={!!errors.valor}>
+                <label>Valor:</label>
+                <input
+                  type="number"
+                  name="valor"
+                  value={movimentacao.valor}
+                  onChange={handleInputChange}
+                />
+                {errors.valor && (
+                  <S.ErrorMessage>{errors.valor}</S.ErrorMessage>
+                )}
+              </Form.Field>
 
-            <S.Flex>
-              <Button type="submit">Adicionar Movimentação</Button>
-              <Button type="button" onClick={() => setShowPopup(false)}>
-                Fechar
-              </Button>
-            </S.Flex>
-          </Form>
-        </S.Content>
-      )}
+              <S.Flex>
+                <Button type="submit">Adicionar Movimentação</Button>
+              </S.Flex>
+            </Form>{' '}
+          </Accordion.Content>
+        </Accordion>
+      </S.Content>
     </S.Container>
   );
 };

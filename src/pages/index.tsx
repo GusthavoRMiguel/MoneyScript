@@ -1,9 +1,10 @@
-import HomePage from '@/templates/home';
+import PublicRoute from '@/components/PublicRoute';
+import LoginPage from '@/templates/(auth)/login';
 
-export default function Home() {
+export default function Login() {
   return (
-    <>
-      <HomePage />
-    </>
+    <PublicRoute>
+      <LoginPage />
+    </PublicRoute>
   );
 }

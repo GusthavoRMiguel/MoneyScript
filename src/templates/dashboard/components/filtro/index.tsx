@@ -1,9 +1,8 @@
-'use client';
 import React, { useState } from 'react';
-import { Dropdown, Form, Button } from 'semantic-ui-react';
+import { Dropdown, Form, Button, Accordion } from 'semantic-ui-react';
 import * as Yup from 'yup';
 import * as S from './style';
-import { FaFilterCircleDollar } from 'react-icons/fa6';
+
 import ITransactionFilter from '@/interfaces/ITransactionFilter';
 
 interface FilterProps {
@@ -11,7 +10,6 @@ interface FilterProps {
 }
 
 const Filtro: React.FC<FilterProps> = ({ onApplyFilter }) => {
-  const [showFilter, setShowFilter] = useState<boolean>(false);
   const [intervaloData, setIntervaloData] = useState<{
     DataInicial: Date;
     DataFinal: Date;
@@ -22,6 +20,7 @@ const Filtro: React.FC<FilterProps> = ({ onApplyFilter }) => {
   const [tipo, setTipo] = useState<string>('');
   const [subtipoEntrada, setSubTipoEntrada] = useState<string>('');
   const [subtipoSaida, setSubTipoSaida] = useState<string>('');
+  const [activeIndex, setActiveIndex] = useState<number>(0);
 
   const opcoesMostrarValores = [
     { key: 't', text: 'Todos', value: 'todos' },
@@ -94,92 +93,96 @@ const Filtro: React.FC<FilterProps> = ({ onApplyFilter }) => {
     }
   };
 
+  const handleAccordionClick = (index: number) => {
+    setActiveIndex(activeIndex === index ? -1 : index);
+  };
+
   return (
     <S.Container>
-      {!showFilter ? (
-        <>
-          <S.Icone>
-            <button onClick={() => setShowFilter(true)}>
-              Filtro
-              <FaFilterCircleDollar size={20} />
-            </button>
-          </S.Icone>
-        </>
-      ) : (
-        <S.Content>
-          <Form>
-            <Form.Group widths="equal">
-              <Form.Field>
-                <label>Data de Início</label>
-                <input
-                  type="date"
-                  value={intervaloData.DataInicial.toISOString().split('T')[0]}
-                  onChange={(e) =>
-                    setIntervaloData({
-                      ...intervaloData,
-                      DataInicial: new Date(e.target.value)
-                    })
-                  }
-                />
-              </Form.Field>
-              <Form.Field>
-                <label>Data Final</label>
-                <input
-                  type="date"
-                  value={intervaloData.DataFinal.toISOString().split('T')[0]}
-                  onChange={(e) =>
-                    setIntervaloData({
-                      ...intervaloData,
-                      DataFinal: new Date(e.target.value)
-                    })
-                  }
-                />
-              </Form.Field>
-            </Form.Group>
+      <S.Content>
+        <Accordion styled fluid>
+          <Accordion.Title
+            active={activeIndex === 0}
+            index={0}
+            onClick={() => handleAccordionClick(0)}
+          >
+            <h1>Filtro</h1>
+          </Accordion.Title>
+          <Accordion.Content active={activeIndex === 0}>
+            <Form>
+              <Form.Group widths="equal">
+                <Form.Field>
+                  <label>Data de Início</label>
+                  <input
+                    type="date"
+                    value={
+                      intervaloData.DataInicial.toISOString().split('T')[0]
+                    }
+                    onChange={(e) =>
+                      setIntervaloData({
+                        ...intervaloData,
+                        DataInicial: new Date(e.target.value)
+                      })
+                    }
+                  />
+                </Form.Field>
+                <Form.Field>
+                  <label>Data Final</label>
+                  <input
+                    type="date"
+                    value={intervaloData.DataFinal.toISOString().split('T')[0]}
+                    onChange={(e) =>
+                      setIntervaloData({
+                        ...intervaloData,
+                        DataFinal: new Date(e.target.value)
+                      })
+                    }
+                  />
+                </Form.Field>
+              </Form.Group>
 
-            <Form.Field>
-              <label>Tipo de Movimentação</label>
-              <Dropdown
-                selection
-                options={opcoesMostrarValores}
-                placeholder="Selecione o que exibir"
-                onChange={(e, { value }) => setTipo(value as string)}
-              />
-            </Form.Field>
-            {tipo === 'entradas' && (
               <Form.Field>
-                <label>Tipo de Entrada</label>
+                <label>Tipo de Movimentação</label>
                 <Dropdown
                   selection
-                  options={opcoesTipoEntrada}
-                  placeholder="Selecione o tipo de entrada"
-                  onChange={(e, { value }) =>
-                    setSubTipoEntrada(value as string)
-                  }
+                  options={opcoesMostrarValores}
+                  placeholder="Selecione o que exibir"
+                  onChange={(e, { value }) => setTipo(value as string)}
                 />
               </Form.Field>
-            )}
-            {tipo === 'saidas' && (
-              <Form.Field>
-                <label>Tipo de Saída</label>
-                <Dropdown
-                  selection
-                  options={opcoesTipoSaida}
-                  placeholder="Selecione o tipo de saída"
-                  onChange={(e, { value }) => setSubTipoSaida(value as string)}
-                />
-              </Form.Field>
-            )}
-            <S.Flex>
-              <Button onClick={aplicarFiltro}>Aplicar Filtro</Button>
-
-              <Button type="button" onClick={() => setShowFilter(false)}>
-                Fechar Filtro
-              </Button>
-            </S.Flex>
-          </Form>
-        </S.Content>
-      )}
+              {tipo === 'entradas' && (
+                <Form.Field>
+                  <label>Tipo de Entrada</label>
+                  <Dropdown
+                    selection
+                    options={opcoesTipoEntrada}
+                    placeholder="Selecione o tipo de entrada"
+                    onChange={(e, { value }) =>
+                      setSubTipoEntrada(value as string)
+                    }
+                  />
+                </Form.Field>
+              )}
+              {tipo === 'saidas' && (
+                <Form.Field>
+                  <label>Tipo de Saída</label>
+                  <Dropdown
+                    selection
+                    options={opcoesTipoSaida}
+                    placeholder="Selecione o tipo de saída"
+                    onChange={(e, { value }) =>
+                      setSubTipoSaida(value as string)
+                    }
+                  />
+                </Form.Field>
+              )}
+              <S.Flex>
+                <Button onClick={aplicarFiltro}>Aplicar Filtro</Button>
+              </S.Flex>
+            </Form>
+          </Accordion.Content>
+        </Accordion>
+      </S.Content>
     </S.Container>
   );
 };

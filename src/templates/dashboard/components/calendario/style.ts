@@ -58,3 +58,17 @@ export const CalendarDay = styled.div`
     border: 2px solid #333;
   }
 `;
+
+export const DetailCard = styled.div`
+  display: flex;
+  padding: 1rem;
+  flex-direction: column;
+
+  &.entrada {
+    background-color: #a6f3a6;
+  }
+
+  &.saida {
+    background-color: #ff9999;
+  }
+`;

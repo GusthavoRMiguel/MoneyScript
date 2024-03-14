@@ -2,47 +2,22 @@ import styled from 'styled-components';
 import theme from '@/styles/theme';
 
 export const Container = styled.div`
-  width: 50%;
-  height: 10vh;
+  width: 100%;
+
   background-color: white;
   border: solid 1px ${theme.colors.blackQuantum};
-  @media (max-width: 640px) {
-    width: 100%;
-    height: auto;
-  }
-`;
-
-export const Icone = styled.div`
-  width: 100%;
-  display: flex;
-  padding: 1rem;
-  justify-content: center;
-
-  button {
-    font-size: 2rem;
-    background-color: transparent;
-    border: none;
-    gap: 10px;
-    display: flex;
-    align-items: center;
-  }
-
-  @media (max-width: 640px) {
-    button {
-      font-size: 1.5rem;
-    }
-  }
 `;
 
 export const Content = styled.div`
+  width: 100%;
   display: flex;
-  position: absolute;
-  z-index: ${theme.layers.base};
-  width: 50%;
-  left: 0.1px;
+  flex-direction: column;
+  padding: 1rem;
+  justify-content: center;
+  align-items: center;
   background-color: white;
   border: solid 1px ${theme.colors.blackQuantum};
-  padding: 1rem;
+  gap: 10px;
 
   form {
     width: 100%;
