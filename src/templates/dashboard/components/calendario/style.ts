@@ -6,7 +6,11 @@ export const CalendarContainer = styled.div`
   height: 50vh;
   padding: 1rem;
   border: solid 1px;
-  margin-right: 1rem;
+
+  @media (max-width: 640px) {
+    width: 100%;
+    height: auto;
+  }
 `;
 
 export const CalendarGrid = styled.div`

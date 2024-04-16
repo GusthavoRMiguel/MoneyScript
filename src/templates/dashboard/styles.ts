@@ -25,6 +25,12 @@ export const CalendarHeader = styled.div`
     cursor: pointer;
     background-color: ${theme.colors.whiteSnow};
   }
+
+  @media (max-width: 640px) {
+    input {
+      font-size: 16px;
+    }
+  }
 `;
 
 export const CalendarButton = styled.button`
@@ -33,6 +39,9 @@ export const CalendarButton = styled.button`
   cursor: pointer;
   font-size: 14px;
   font-weight: bold;
+  @media (max-width: 640px) {
+    font-size: 10px;
+  }
 `;
 
 export const Content = styled.div`
