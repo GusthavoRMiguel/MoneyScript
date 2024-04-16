@@ -31,6 +31,7 @@ interface DBContextProps {
     filterOptions: ITransactionFilter
   ) => Promise<any[]>;
   removeTransaction: (transactionId: string) => Promise<void>;
+  getBalanceUntilMonth: (targetDate: Date) => Promise<number>;
 }
 
 const DBContext = createContext<DBContextProps | undefined>(undefined);
@@ -276,6 +277,53 @@ export function DBProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const getBalanceUntilMonth = async (targetDate: Date): Promise<number> => {
+    try {
+      const id = user?.uid;
+      if (!id) {
+        throw new Error('User not authenticated');
+      }
+
+      const targetYear = targetDate.getFullYear();
+      const targetMonth = targetDate.getMonth();
+      const lastDayOfMonth = new Date(targetYear, targetMonth, 0).getDate();
+
+      const userRef = firebase.firestore().collection('users').doc(id);
+      const transactionsRef = userRef.collection('transactions');
+
+      const querySnapshot = await transactionsRef
+        .where(
+          'data',
+          '<=',
+          new Date(targetYear, targetMonth - 1, lastDayOfMonth)
+        )
+        .get();
+
+      let balance = 0;
+
+      console.log(
+        'Transactions:',
+        querySnapshot.docs.map((doc) => doc.data())
+      ); // Log das transações
+
+      querySnapshot.forEach((doc) => {
+        const transaction = doc.data() as ITransaction;
+        const valor = transaction.valor || 0;
+
+        if (transaction.tipo === 'entrada') {
+          balance += valor;
+        } else {
+          balance -= valor;
+        }
+      });
+
+      return balance;
+    } catch (error) {
+      console.error('Error fetching balance:', error);
+      throw error;
+    }
+  };
+
   useEffect(() => {
     if (user) {
       getUserData();
@@ -292,7 +340,8 @@ export function DBProvider({ children }: { children: ReactNode }) {
     getProfessionalData,
     addTransaction,
     getTransactionsByFilter,
-    removeTransaction
+    removeTransaction,
+    getBalanceUntilMonth
   };
 
   return (

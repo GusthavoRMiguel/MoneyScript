@@ -3,24 +3,10 @@ import theme from '@/styles/theme';
 
 export const CalendarContainer = styled.div`
   width: 50vw;
+  height: 50vh;
   padding: 1rem;
   border: solid 1px;
   margin-right: 1rem;
-`;
-
-export const CalendarHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-`;
-
-export const CalendarButton = styled.button`
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
 `;
 
 export const CalendarGrid = styled.div`

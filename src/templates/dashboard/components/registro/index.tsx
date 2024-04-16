@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import * as S from './styles';
 import ITransaction from '@/interfaces/ITransaction';
-import { Dropdown, Form, Button, Accordion } from 'semantic-ui-react';
-import { BsCashCoin } from 'react-icons/bs';
+import { Dropdown, Form, Button, Modal } from 'semantic-ui-react';
+import { IoMdAddCircleOutline } from 'react-icons/io';
 import * as Yup from 'yup';
 
 interface AddRecordProps {
@@ -10,7 +10,7 @@ interface AddRecordProps {
 }
 
 const AddMovimentacao: React.FC<AddRecordProps> = ({ onSubmit }) => {
-  const [activeIndex, setActiveIndex] = useState<number>(0);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [movimentacao, setMovimentacao] = useState<ITransaction>({
     id: '',
     data: '',
@@ -64,6 +64,14 @@ const AddMovimentacao: React.FC<AddRecordProps> = ({ onSubmit }) => {
           { key: 'outros', text: 'Outros', value: 'outros' }
         ];
 
+  const handleModalOpen = () => {
+    setModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -88,6 +96,7 @@ const AddMovimentacao: React.FC<AddRecordProps> = ({ onSubmit }) => {
         descricao: '',
         valor: undefined
       });
+      handleModalClose();
     } catch (error) {
       if (error instanceof Yup.ValidationError) {
         let validationErrors: Partial<ITransaction> = {};
@@ -108,101 +117,98 @@ const AddMovimentacao: React.FC<AddRecordProps> = ({ onSubmit }) => {
     }
   };
 
-  const handleAccordionClick = (index: number) => {
-    setActiveIndex(activeIndex === index ? -1 : index);
-  };
-
   return (
     <S.Container>
-      <S.Content>
-        <Accordion styled fluid>
-          <Accordion.Title
-            active={activeIndex === 0}
-            index={0}
-            onClick={() => handleAccordionClick(0)}
-          >
-            <h1>Adicionar Transação</h1>
-          </Accordion.Title>
-          <Accordion.Content active={activeIndex === 0}>
-            <Form onSubmit={handleSubmit}>
-              <Form.Field error={!!errors.data}>
-                <label>Data:</label>
-                <input
-                  type="date"
-                  name="data"
-                  value={movimentacao.data}
-                  onChange={handleInputChange}
-                />
-                {errors.data && <S.ErrorMessage>{errors.data}</S.ErrorMessage>}
-              </Form.Field>
+      <S.OpenButton onClick={handleModalOpen}>
+        Adicionar Movimentação <IoMdAddCircleOutline />
+      </S.OpenButton>
 
-              <Form.Field error={!!errors.tipo}>
-                <label>Tipo:</label>
-                <Dropdown
-                  selection
-                  name="tipo"
-                  options={tipoOptions}
-                  value={movimentacao.tipo}
-                  onChange={(e, { value }) =>
-                    handleInputChange({
-                      target: { name: 'tipo', value }
-                    } as React.ChangeEvent<HTMLInputElement>)
-                  }
-                />
-                {errors.tipo && <S.ErrorMessage>{errors.tipo}</S.ErrorMessage>}
-              </Form.Field>
+      <Modal onClose={handleModalClose} open={modalOpen}>
+        <Modal.Header>
+          <h1>Adicionar Transação</h1>
+        </Modal.Header>
+        <Modal.Content>
+          <Form onSubmit={handleSubmit}>
+            <Form.Field error={!!errors.data}>
+              <label>Data:</label>
+              <input
+                type="date"
+                name="data"
+                value={movimentacao.data}
+                onChange={handleInputChange}
+              />
+              {errors.data && <S.ErrorMessage>{errors.data}</S.ErrorMessage>}
+            </Form.Field>
 
-              <Form.Field error={!!errors.titulo}>
-                <label>Subtipo:</label>
-                <Dropdown
-                  selection
-                  name="titulo"
-                  options={subtipoOptions}
-                  value={movimentacao.titulo}
-                  onChange={(e, { value }) =>
-                    handleInputChange({
-                      target: { name: 'titulo', value }
-                    } as React.ChangeEvent<HTMLInputElement>)
-                  }
-                />
-                {errors.titulo && (
-                  <S.ErrorMessage>{errors.titulo}</S.ErrorMessage>
-                )}
-              </Form.Field>
+            <Form.Field error={!!errors.tipo}>
+              <label>Tipo:</label>
+              <Dropdown
+                selection
+                name="tipo"
+                options={tipoOptions}
+                value={movimentacao.tipo}
+                onChange={(e, { value }) =>
+                  handleInputChange({
+                    target: { name: 'tipo', value }
+                  } as React.ChangeEvent<HTMLInputElement>)
+                }
+              />
+              {errors.tipo && <S.ErrorMessage>{errors.tipo}</S.ErrorMessage>}
+            </Form.Field>
 
-              <Form.Field error={!!errors.descricao}>
-                <label>Descrição:</label>
-                <input
-                  type="text"
-                  name="descricao"
-                  value={movimentacao.descricao}
-                  onChange={handleInputChange}
-                />
-                {errors.descricao && (
-                  <S.ErrorMessage>{errors.descricao}</S.ErrorMessage>
-                )}
-              </Form.Field>
+            <Form.Field error={!!errors.titulo}>
+              <label>Subtipo:</label>
+              <Dropdown
+                selection
+                name="titulo"
+                options={subtipoOptions}
+                value={movimentacao.titulo}
+                onChange={(e, { value }) =>
+                  handleInputChange({
+                    target: { name: 'titulo', value }
+                  } as React.ChangeEvent<HTMLInputElement>)
+                }
+              />
+              {errors.titulo && (
+                <S.ErrorMessage>{errors.titulo}</S.ErrorMessage>
+              )}
+            </Form.Field>
 
-              <Form.Field error={!!errors.valor}>
-                <label>Valor:</label>
-                <input
-                  type="number"
-                  name="valor"
-                  value={movimentacao.valor}
-                  onChange={handleInputChange}
-                />
-                {errors.valor && (
-                  <S.ErrorMessage>{errors.valor}</S.ErrorMessage>
-                )}
-              </Form.Field>
+            <Form.Field error={!!errors.descricao}>
+              <label>Descrição:</label>
+              <input
+                type="text"
+                name="descricao"
+                value={movimentacao.descricao}
+                onChange={handleInputChange}
+              />
+              {errors.descricao && (
+                <S.ErrorMessage>{errors.descricao}</S.ErrorMessage>
+              )}
+            </Form.Field>
 
-              <S.Flex>
-                <Button type="submit">Adicionar Movimentação</Button>
-              </S.Flex>
-            </Form>{' '}
-          </Accordion.Content>
-        </Accordion>
-      </S.Content>
+            <Form.Field error={!!errors.valor}>
+              <label>Valor:</label>
+              <input
+                type="number"
+                name="valor"
+                value={movimentacao.valor}
+                onChange={handleInputChange}
+              />
+              {errors.valor && <S.ErrorMessage>{errors.valor}</S.ErrorMessage>}
+            </Form.Field>
+
+            <S.Flex>
+              <Button type="submit">Adicionar Movimentação</Button>
+            </S.Flex>
+          </Form>
+        </Modal.Content>
+        <Modal.Actions>
+          <Button negative onClick={handleModalClose}>
+            Fechar
+          </Button>
+        </Modal.Actions>
+      </Modal>
     </S.Container>
   );
 };

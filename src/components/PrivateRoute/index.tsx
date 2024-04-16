@@ -13,7 +13,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/login'); // Redireciona para a página de login se não estiver autenticado
+      router.push('/'); // Redireciona para a página de login se não estiver autenticado
     }
   }, [user, loading, router]);
 

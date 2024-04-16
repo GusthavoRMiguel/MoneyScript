@@ -32,7 +32,7 @@ const UserSidebar = ({ open, onClose }) => {
             </>
           ) : (
             <>
-              <Link href="/login">Entrar</Link>
+              <Link href="/">Entrar</Link>
               <Link href="/register">Cadastrar-se</Link>
             </>
           )}

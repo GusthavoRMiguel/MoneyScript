@@ -11,7 +11,7 @@ const spin = keyframes`
 export const Container = styled.div`
   width: 100%;
   max-height: 400px;
-  overflow-y: scroll;
+  overflow-y: auto;
   border: solid 1px ${theme.colors.blackQuantum};
 `;
 

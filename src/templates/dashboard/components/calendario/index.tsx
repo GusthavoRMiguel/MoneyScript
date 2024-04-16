@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {
   CalendarContainer,
-  CalendarButton,
   CalendarDay,
   CalendarGrid,
-  CalendarHeader,
   DetailCard
 } from './style';
 import { Button, Modal } from 'semantic-ui-react';
@@ -13,31 +11,15 @@ import ITransaction from '@/interfaces/ITransaction';
 interface Props {
   movimentacoes: ITransaction[];
   loading: boolean;
+  currentDate: Date;
 }
 
-const Calendario: React.FC<Props> = ({ movimentacoes, loading }) => {
-  const [currentDate, setCurrentDate] = useState(new Date());
+const Calendario: React.FC<Props> = ({
+  movimentacoes,
+  loading,
+  currentDate
+}) => {
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
-
-  const handlePreviousMonth = () => {
-    setCurrentDate((prevDate) => {
-      const prevMonth = new Date(
-        prevDate.getFullYear(),
-        prevDate.getMonth() - 1
-      );
-      return prevMonth;
-    });
-  };
-
-  const handleNextMonth = () => {
-    setCurrentDate((prevDate) => {
-      const nextMonth = new Date(
-        prevDate.getFullYear(),
-        prevDate.getMonth() + 1
-      );
-      return nextMonth;
-    });
-  };
 
   const handleDayClick = (day: string) => {
     setSelectedDay(day);
@@ -115,16 +97,6 @@ const Calendario: React.FC<Props> = ({ movimentacoes, loading }) => {
 
   return (
     <CalendarContainer>
-      <CalendarHeader>
-        <CalendarButton onClick={handlePreviousMonth}>Anterior</CalendarButton>
-        <h1>
-          {currentDate.toLocaleDateString('default', {
-            month: 'long',
-            year: 'numeric'
-          })}
-        </h1>
-        <CalendarButton onClick={handleNextMonth}>Próximo</CalendarButton>
-      </CalendarHeader>
       <CalendarGrid>
         <div>Domingo</div>
         <div>Segunda</div>
@@ -139,22 +111,28 @@ const Calendario: React.FC<Props> = ({ movimentacoes, loading }) => {
         <Modal open={selectedDay !== null} onClose={() => setSelectedDay(null)}>
           <Modal.Header>Detalhes do Dia </Modal.Header>
           <Modal.Content>
-            <p>Detalhamento das movimentações :</p>
-            <ul>
-              {getTransactionsForSelectedDay().map((transaction, index) => (
-                <DetailCard
-                  key={index}
-                  className={
-                    transaction.tipo === 'entrada' ? 'entrada' : 'saida'
-                  }
-                >
-                  <p>Titulo:{transaction.titulo}</p>
-                  <p>Descrição: {transaction.descricao}</p>
-                  <p>Tipo: {transaction.tipo}</p>
-                  <p>Valor: {transaction.valor}</p>
-                </DetailCard>
-              ))}
-            </ul>
+            {getTransactionsForSelectedDay().length !== 0 ? (
+              <>
+                <p>Detalhamento das movimentações :</p>
+                <ul>
+                  {getTransactionsForSelectedDay().map((transaction, index) => (
+                    <DetailCard
+                      key={index}
+                      className={
+                        transaction.tipo === 'entrada' ? 'entrada' : 'saida'
+                      }
+                    >
+                      <p>Titulo:{transaction.titulo}</p>
+                      <p>Descrição: {transaction.descricao}</p>
+                      <p>Tipo: {transaction.tipo}</p>
+                      <p>Valor: {transaction.valor}</p>
+                    </DetailCard>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <p>Nenhuma transação.</p>
+            )}
           </Modal.Content>
           <Modal.Actions>
             <Button onClick={() => setSelectedDay(null)}>Fechar</Button>

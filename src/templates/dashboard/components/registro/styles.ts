@@ -2,28 +2,24 @@ import styled from 'styled-components';
 import theme from '@/styles/theme';
 
 export const Container = styled.div`
-  width: 100%;
+  padding: 1rem;
   background-color: white;
   border: solid 1px ${theme.colors.blackQuantum};
+  width: fit-content;
+  border-radius: 10px;
 `;
 
-export const Content = styled.div`
+export const OpenButton = styled.button`
   display: flex;
-  flex-direction: column;
-  width: 100%;
+  background-color: transparent;
+  border: none;
+  font-size: 30px;
   gap: 10px;
-  padding: 1rem;
-  justify-content: center;
   align-items: center;
-  background-color: white;
-  border: solid 1px ${theme.colors.blackQuantum};
-  padding: 1rem;
 
-  form {
-    width: 100%;
-  }
-  @media (max-width: 640px) {
-    width: 100%;
+  svg {
+    width: 30px;
+    height: 30px;
   }
 `;
 

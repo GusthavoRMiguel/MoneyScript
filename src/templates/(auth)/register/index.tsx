@@ -105,7 +105,7 @@ const RegisterPage: React.FC = () => {
             <span>
               Já possui uma conta?
               <strong>
-                <Link href="/login">Entre</Link>
+                <Link href="/">Entre</Link>
               </strong>
             </span>
           </Form>
