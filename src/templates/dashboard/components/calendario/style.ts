@@ -49,6 +49,7 @@ export const DetailCard = styled.div`
   display: flex;
   padding: 1rem;
   flex-direction: column;
+  text-transform: capitalize;
 
   &.entrada {
     background-color: #a6f3a6;

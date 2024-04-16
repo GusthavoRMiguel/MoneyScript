@@ -5,6 +5,8 @@ interface ITransaction {
   titulo: string;
   descricao: string;
   valor: number | undefined;
+  isRecorrente?: boolean;
+  recorrenciaMeses?: number;
 }
 
 export default ITransaction;

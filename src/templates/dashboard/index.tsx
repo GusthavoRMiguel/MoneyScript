@@ -11,7 +11,8 @@ import AddMovimentacao from './components/registro';
 import { BsFillEyeFill, BsFillEyeSlashFill } from 'react-icons/bs';
 
 const DashboardPage: React.FC = () => {
-  const { getTransactionsByFilter, addTransaction } = useDB();
+  const { getTransactionsByFilter, addTransaction, getBalanceForMonth } =
+    useDB();
 
   const [currentDate, setCurrentDate] = useState(new Date());
   const [movimentacoes, setMovimentacoes] = useState<ITransaction[]>([]);
@@ -29,7 +30,7 @@ const DashboardPage: React.FC = () => {
   };
 
   const formatBalanceToPassword = (balance: number): string => {
-    return '*'.repeat(String(balance).length); // Transforma o saldo em uma string de asteriscos com o mesmo comprimento
+    return '*'.repeat(String(balance).length);
   };
 
   const getLastDayOfMonth = (year: number, month: number): number => {
@@ -60,12 +61,6 @@ const DashboardPage: React.FC = () => {
   useEffect(() => {
     const fetchTransactions = async () => {
       const transactions = await memoizedTransactions;
-      const totalValue = transactions.reduce(
-        (total, movimentacao) => total + Number(movimentacao.valor),
-        0
-      );
-
-      setSaldo(totalValue);
       setMovimentacoes(transactions);
     };
 
@@ -104,23 +99,65 @@ const DashboardPage: React.FC = () => {
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const [year, month] = e.target.value.split('-').map(Number);
-    setCurrentDate(new Date(year, month - 1)); // Subtrai 1 do mês para ajustar ao formato de JavaScript
+    setCurrentDate(new Date(year, month - 1));
     setSelectedDate(e.target.value);
   };
 
   const handleAddTransaction = async (movimentacao: ITransaction) => {
     setLoading(true);
     try {
-      const { success } = await addTransaction(movimentacao);
-      if (success) {
-        setDataUpdated(true);
+      if (movimentacao.isRecorrente && movimentacao.recorrenciaMeses) {
+        await addTransaction(movimentacao);
+
+        const originalDate = new Date(movimentacao.data);
+        const originalDay = originalDate.getDate();
+        const originalMonth = originalDate.getMonth();
+        const originalYear = originalDate.getFullYear();
+
+        for (let i = 1; i < movimentacao.recorrenciaMeses; i++) {
+          let newMonth = originalMonth + i;
+          let newYear = originalYear;
+          const newDay = originalDay + 1;
+
+          if (newMonth > 11) {
+            newMonth -= 12;
+            newYear++;
+          }
+
+          const newDate = new Date(newYear, newMonth, newDay);
+
+          const nextMovimentacao = {
+            ...movimentacao,
+            data: newDate.toISOString().slice(0, 10)
+          };
+          await addTransaction(nextMovimentacao);
+          setDataUpdated(true);
+        }
+      } else {
+        const { success } = await addTransaction(movimentacao);
+        if (success) {
+          console.log('Transação Adicionada !');
+        }
       }
     } catch (error) {
       console.error('Erro ao adicionar transação:', error);
     } finally {
       setLoading(false);
+      setDataUpdated(true);
     }
   };
+
+  useEffect(() => {
+    const fetchBalance = async () => {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth() + 1;
+      const balance = await getBalanceForMonth(year, month);
+
+      setSaldo(balance);
+    };
+
+    fetchBalance();
+  }, [currentDate, getBalanceForMonth, dataUpdated]);
 
   return (
     <S.Container>
@@ -138,15 +175,14 @@ const DashboardPage: React.FC = () => {
           <S.Saldo>
             {isBalanceHidden ? (
               <>
-                <h1>Saldo deste mês:</h1>{' '}
-                <span>R$ {formatBalanceToPassword(saldo)}</span>{' '}
+                <h1>Saldo:</h1> <span>R$ {formatBalanceToPassword(saldo)}</span>{' '}
                 <button type="button" onClick={toggleView}>
                   <BsFillEyeSlashFill />
                 </button>
               </>
             ) : (
               <>
-                <h1>Saldo deste mês:</h1> <span>R$ {saldo}</span>
+                <h1>Saldo:</h1> <span>R$ {saldo.toLocaleString('pt-Br')}</span>
                 <button type="button" onClick={toggleView}>
                   <BsFillEyeFill />
                 </button>

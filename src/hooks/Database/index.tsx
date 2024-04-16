@@ -31,7 +31,7 @@ interface DBContextProps {
     filterOptions: ITransactionFilter
   ) => Promise<any[]>;
   removeTransaction: (transactionId: string) => Promise<void>;
-  getBalanceUntilMonth: (targetDate: Date) => Promise<number>;
+  getBalanceForMonth: (year: number, month: number) => Promise<number>;
 }
 
 const DBContext = createContext<DBContextProps | undefined>(undefined);
@@ -277,50 +277,45 @@ export function DBProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const getBalanceUntilMonth = async (targetDate: Date): Promise<number> => {
+  const getBalanceForMonth = async (year: number, month: number) => {
     try {
       const id = user?.uid;
       if (!id) {
-        throw new Error('User not authenticated');
+        return 0;
       }
-
-      const targetYear = targetDate.getFullYear();
-      const targetMonth = targetDate.getMonth();
-      const lastDayOfMonth = new Date(targetYear, targetMonth, 0).getDate();
 
       const userRef = firebase.firestore().collection('users').doc(id);
       const transactionsRef = userRef.collection('transactions');
 
+      const lastDayOfMonth = new Date(year, month, 0).getDate();
+
+      const endDate = `${year}-${String(month).padStart(
+        2,
+        '0'
+      )}-${lastDayOfMonth}`;
+
       const querySnapshot = await transactionsRef
-        .where(
-          'data',
-          '<=',
-          new Date(targetYear, targetMonth - 1, lastDayOfMonth)
-        )
+
+        .where('data', '<=', endDate)
         .get();
 
-      let balance = 0;
-
-      console.log(
-        'Transactions:',
-        querySnapshot.docs.map((doc) => doc.data())
-      ); // Log das transações
+      let totalSum = 0;
 
       querySnapshot.forEach((doc) => {
-        const transaction = doc.data() as ITransaction;
-        const valor = transaction.valor || 0;
+        const transactionData = doc.data() as ITransaction;
 
-        if (transaction.tipo === 'entrada') {
-          balance += valor;
-        } else {
-          balance -= valor;
+        if (
+          transactionData.valor &&
+          typeof transactionData.valor === 'number'
+        ) {
+          totalSum += transactionData.valor;
         }
       });
 
-      return balance;
+      return totalSum;
     } catch (error) {
-      console.error('Error fetching balance:', error);
-      throw error;
+      console.error('Error getting balance for specific month: ', error);
+      return 0;
     }
   };
 
@@ -341,7 +336,7 @@ export function DBProvider({ children }: { children: ReactNode }) {
     addTransaction,
     getTransactionsByFilter,
     removeTransaction,
-    getBalanceUntilMonth
+    getBalanceForMonth
   };
 
   return (

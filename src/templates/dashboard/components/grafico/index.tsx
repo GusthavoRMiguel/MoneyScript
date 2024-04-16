@@ -44,7 +44,7 @@ const Grafico: React.FC<GraphProps> = ({ movimentacoes, loading }) => {
                   : 'entrada'
               }
             >
-              <p>Valor: R$ {movimentacao.valor}</p>
+              <p>Valor: R$ {movimentacao.valor?.toLocaleString('pt-br')}</p>
               <p>Tipo: {movimentacao.tipo}</p>
               <p>Título: {movimentacao.titulo}</p>
 
@@ -53,7 +53,7 @@ const Grafico: React.FC<GraphProps> = ({ movimentacoes, loading }) => {
               )}
             </div>
           ))}
-          <h2>Total: R$ {totalValue}</h2>
+          <h2>Total: R$ {totalValue.toLocaleString('pt-br')}</h2>
         </S.TooltipContainer>
       );
     }

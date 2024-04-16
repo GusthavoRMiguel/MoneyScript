@@ -122,10 +122,12 @@ const Calendario: React.FC<Props> = ({
                         transaction.tipo === 'entrada' ? 'entrada' : 'saida'
                       }
                     >
-                      <p>Titulo:{transaction.titulo}</p>
+                      <p>Titulo: {transaction.titulo}</p>
                       <p>Descrição: {transaction.descricao}</p>
                       <p>Tipo: {transaction.tipo}</p>
-                      <p>Valor: {transaction.valor}</p>
+                      <p>
+                        Valor: R$ {transaction.valor?.toLocaleString('pt-br')}
+                      </p>
                     </DetailCard>
                   ))}
                 </ul>

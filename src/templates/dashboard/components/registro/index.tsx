@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
 import * as S from './styles';
 import ITransaction from '@/interfaces/ITransaction';
-import { Dropdown, Form, Button, Modal } from 'semantic-ui-react';
+import {
+  Dropdown,
+  Form,
+  Button,
+  Modal,
+  Checkbox,
+  CheckboxProps
+} from 'semantic-ui-react';
 import { IoMdAddCircleOutline } from 'react-icons/io';
 import * as Yup from 'yup';
 
@@ -17,7 +24,9 @@ const AddMovimentacao: React.FC<AddRecordProps> = ({ onSubmit }) => {
     tipo: '',
     titulo: '',
     descricao: '',
-    valor: undefined
+    valor: undefined,
+    isRecorrente: false,
+    recorrenciaMeses: 3
   });
   const [errors, setErrors] = useState<Partial<ITransaction>>({});
 
@@ -25,8 +34,46 @@ const AddMovimentacao: React.FC<AddRecordProps> = ({ onSubmit }) => {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setMovimentacao({ ...movimentacao, [name]: value });
+
+    setMovimentacao((prevState) => ({
+      ...prevState,
+      [name]: value
+    }));
+
+    if (name === 'isRecorrente' && !value) {
+      setMovimentacao((prevState) => ({
+        ...prevState,
+        recorrenciaMeses: 3
+      }));
+    }
   };
+
+  const handleCheckboxChange = (
+    e: React.FormEvent<HTMLInputElement>,
+    data: CheckboxProps
+  ) => {
+    const { name, checked } = data;
+
+    if (typeof name !== 'string') {
+      return;
+    }
+
+    setMovimentacao((prevState) => {
+      const updatedState = { ...prevState, [name]: checked };
+
+      if (name === 'isRecorrente' && !checked) {
+        updatedState.recorrenciaMeses = 3;
+      }
+
+      return updatedState;
+    });
+  };
+
+  const recorrenciaOptions = [
+    { key: '3meses', text: '3 meses', value: 3 },
+    { key: '6meses', text: '6 meses', value: 6 },
+    { key: '12meses', text: '12 meses', value: 12 }
+  ];
 
   const validationSchema = Yup.object().shape({
     data: Yup.date().required('A data é obrigatória'),
@@ -39,7 +86,17 @@ const AddMovimentacao: React.FC<AddRecordProps> = ({ onSubmit }) => {
             'A descrição é obrigatória quando o subtipo é "outros"'
           )
         : schema;
-    })
+    }),
+    recorrenciaMeses: Yup.number().when(
+      'isRecorrente',
+      (isRecorrente, schema) => {
+        return isRecorrente
+          ? schema
+              .required('A recorrência é obrigatória')
+              .oneOf([3, 6, 12], 'Opção inválida')
+          : schema;
+      }
+    )
   });
 
   const tipoOptions = [
@@ -50,18 +107,56 @@ const AddMovimentacao: React.FC<AddRecordProps> = ({ onSubmit }) => {
   const subtipoOptions =
     movimentacao.tipo === 'entrada'
       ? [
-          { key: 'salario', text: 'Salário', value: 'salario' },
           { key: 'bonus', text: 'Bônus', value: 'bonus' },
-          { key: 'outros', text: 'Outros', value: 'outros' }
+          { key: 'comissao', text: 'Comissão', value: 'comissao' },
+          { key: 'emprestimo', text: 'Empréstimo', value: 'emprestimo' },
+          { key: 'investimento', text: 'Investimento', value: 'investimento' },
+          { key: 'outros', text: 'Outros', value: 'outros' },
+          { key: 'reembolso', text: 'Reembolso', value: 'reembolso' },
+          { key: 'salario', text: 'Salário', value: 'salario' },
+          { key: 'venda', text: 'Venda', value: 'venda' }
         ]
       : [
+          { key: 'alimentacao', text: 'Alimentação', value: 'alimentacao' },
           { key: 'aluguel', text: 'Aluguel', value: 'aluguel' },
+          { key: 'assinaturas', text: 'Assinaturas', value: 'assinaturas' },
+          {
+            key: 'cartaoCredito',
+            text: 'Cartão de Crédito',
+            value: 'cartao de credito'
+          },
+          { key: 'contaAgua', text: 'Conta de água', value: 'conta de agua' },
           {
             key: 'contaEnergia',
             text: 'Conta de energia',
             value: 'conta de energia'
           },
-          { key: 'outros', text: 'Outros', value: 'outros' }
+          { key: 'contaGas', text: 'Conta de gás', value: 'conta de gas' },
+          {
+            key: 'contaInternet',
+            text: 'Conta de internet',
+            value: 'conta de internet'
+          },
+          {
+            key: 'contaTelefone',
+            text: 'Conta de telefone',
+            value: 'conta de telefone'
+          },
+          {
+            key: 'despesasMedicas',
+            text: 'Despesas Médicas',
+            value: 'despesas medicas'
+          },
+          { key: 'educacao', text: 'Educação', value: 'educacao' },
+          { key: 'emprestimo', text: 'Empréstimo', value: 'emprestimo' },
+          {
+            key: 'entretenimento',
+            text: 'Entretenimento',
+            value: 'entretenimento'
+          },
+          { key: 'mercado', text: 'Mercado', value: 'mercado' },
+          { key: 'outros', text: 'Outros', value: 'outros' },
+          { key: 'transporte', text: 'Transporte', value: 'transporte' }
         ];
 
   const handleModalOpen = () => {
@@ -77,6 +172,12 @@ const AddMovimentacao: React.FC<AddRecordProps> = ({ onSubmit }) => {
 
     try {
       const movimentacaoAtualizada = { ...movimentacao };
+
+      movimentacaoAtualizada.valor = Number(movimentacaoAtualizada.valor);
+
+      if (isNaN(movimentacaoAtualizada.valor)) {
+        throw new Error('O valor deve ser numérico');
+      }
 
       if (movimentacaoAtualizada.tipo === 'saida') {
         movimentacaoAtualizada.valor = -(
@@ -94,7 +195,9 @@ const AddMovimentacao: React.FC<AddRecordProps> = ({ onSubmit }) => {
         tipo: '',
         titulo: '',
         descricao: '',
-        valor: undefined
+        valor: undefined,
+        isRecorrente: false,
+        recorrenciaMeses: 3
       });
       handleModalClose();
     } catch (error) {
@@ -196,6 +299,32 @@ const AddMovimentacao: React.FC<AddRecordProps> = ({ onSubmit }) => {
                 onChange={handleInputChange}
               />
               {errors.valor && <S.ErrorMessage>{errors.valor}</S.ErrorMessage>}
+            </Form.Field>
+
+            <Form.Field>
+              <Checkbox
+                label="Recorrente"
+                name="isRecorrente"
+                checked={movimentacao.isRecorrente}
+                onChange={handleCheckboxChange}
+              />
+              {movimentacao.isRecorrente && (
+                <Dropdown
+                  selection
+                  name="recorrenciaMeses"
+                  options={recorrenciaOptions}
+                  value={movimentacao.recorrenciaMeses}
+                  onChange={(e, { value }) => {
+                    handleInputChange({
+                      target: {
+                        name: 'recorrenciaMeses',
+                        value,
+                        type: 'number'
+                      }
+                    } as React.ChangeEvent<HTMLInputElement>);
+                  }}
+                />
+              )}
             </Form.Field>
 
             <S.Flex>

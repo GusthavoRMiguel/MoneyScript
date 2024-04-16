@@ -156,7 +156,9 @@ const Extrato: React.FC<ExtratoProps> = ({ movimentacoes, loading }) => {
                     <S.TableData>{movimentacao.tipo}</S.TableData>
                     <S.TableData>{movimentacao.titulo}</S.TableData>
                     <S.TableData>{movimentacao.descricao}</S.TableData>
-                    <S.TableData>R$ {movimentacao.valor},00</S.TableData>
+                    <S.TableData>
+                      R$ {movimentacao.valor?.toLocaleString('pt-br')}
+                    </S.TableData>
                     <S.TableData>
                       <button onClick={() => handleRemove(movimentacao.id)}>
                         <FaRegTrashAlt />
