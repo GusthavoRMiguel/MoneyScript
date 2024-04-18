@@ -118,7 +118,9 @@ const DashMensal: React.FC = () => {
     });
   };
 
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDateChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const [year, month] = e.target.value.split('-').map(Number);
     setCurrentDate(new Date(year, month - 1));
     setSelectedDate(e.target.value);
