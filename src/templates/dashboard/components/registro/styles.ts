@@ -13,13 +13,13 @@ export const OpenButton = styled.button`
   display: flex;
   background-color: transparent;
   border: none;
-  font-size: 30px;
+  font-size: 20px;
   gap: 10px;
   align-items: center;
 
   svg {
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
   }
 `;
 

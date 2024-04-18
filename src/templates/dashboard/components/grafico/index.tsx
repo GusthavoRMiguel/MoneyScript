@@ -10,6 +10,7 @@ import {
 } from 'recharts';
 import * as S from './style';
 import ITransaction from '@/interfaces/ITransaction';
+import { formatDate } from '@/utils/dateFormatter';
 
 interface GraphProps {
   movimentacoes: ITransaction[];
@@ -33,7 +34,7 @@ const Grafico: React.FC<GraphProps> = ({ movimentacoes, loading }) => {
       return (
         <S.TooltipContainer>
           <h1>
-            Data:<span>{details.data}</span>
+            Data:<span>{formatDate(details.data)}</span>
           </h1>
           {transactionsOnDate.map((movimentacao, index) => (
             <div
@@ -47,7 +48,6 @@ const Grafico: React.FC<GraphProps> = ({ movimentacoes, loading }) => {
               <p>Valor: R$ {movimentacao.valor?.toLocaleString('pt-br')}</p>
               <p>Tipo: {movimentacao.tipo}</p>
               <p>Título: {movimentacao.titulo}</p>
-
               {movimentacao.descricao !== '' && (
                 <p>Descrição: {movimentacao.descricao}</p>
               )}
@@ -76,7 +76,14 @@ const Grafico: React.FC<GraphProps> = ({ movimentacoes, loading }) => {
     return acc;
   }, []);
 
-  const coloredData = groupDataByDate.map((item: any) => {
+  // Ordena os dados pela data
+  const sortedData = groupDataByDate.sort((a: any, b: any) => {
+    const dateA = new Date(a.data);
+    const dateB = new Date(b.data);
+    return dateA.getTime() - dateB.getTime();
+  });
+
+  const coloredData = sortedData.map((item: any) => {
     return {
       ...item,
       fill: item.valor > 0 ? '#2eed2eb3' : '#db2828cc'
@@ -97,11 +104,14 @@ const Grafico: React.FC<GraphProps> = ({ movimentacoes, loading }) => {
               data={coloredData}
               margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
             >
-              <XAxis dataKey="data" />
+              <XAxis
+                dataKey="data"
+                tickFormatter={(tickItem) => formatDate(tickItem)}
+              />
               <YAxis tickCount={10} />
               <CartesianGrid strokeDasharray="3 3" />
               <Tooltip content={renderTooltip} />
-              <Bar dataKey="valor" />
+              <Bar dataKey="valor" barSize={25} />
             </BarChart>
           </ResponsiveContainer>
         )}

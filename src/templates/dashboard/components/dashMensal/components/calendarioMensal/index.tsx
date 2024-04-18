@@ -14,7 +14,7 @@ interface Props {
   currentDate: Date;
 }
 
-const Calendario: React.FC<Props> = ({
+const CalendarioMensal: React.FC<Props> = ({
   movimentacoes,
   loading,
   currentDate
@@ -145,4 +145,4 @@ const Calendario: React.FC<Props> = ({
   );
 };
 
-export default Calendario;
+export default CalendarioMensal;

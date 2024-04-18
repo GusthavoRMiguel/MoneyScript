@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import theme from '@/styles/theme';
 
 export const CalendarContainer = styled.div`
-  width: 50vw;
+  width: 50%;
   height: 50vh;
   padding: 1rem;
   border: solid 1px;
