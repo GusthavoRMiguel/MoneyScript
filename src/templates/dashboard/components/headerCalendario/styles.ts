@@ -25,6 +25,8 @@ export const Container = styled.div`
   @media (max-width: 640px) {
     input {
       font-size: 16px;
+      max-width: 155px;
+      text-align: start;
     }
   }
 `;
@@ -41,6 +43,10 @@ export const SelectContainer = styled.div`
   cursor: pointer;
   background-color: ${theme.colors.whiteSnow};
   width: 250px;
+
+  @media (max-width: 640px) {
+    width: 130px;
+  }
 `;
 
 export const IconContainer = styled.div`

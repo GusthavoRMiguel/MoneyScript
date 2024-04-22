@@ -11,12 +11,19 @@ export const Container = styled.div`
 export const Content = styled.div`
   display: flex;
   width: 100%;
+  @media (max-width: 640px) {
+    flex-direction: column;
+  }
 `;
 
 export const SidebarContainer = styled(Sidebar)`
   &&& {
     background-color: #f3f4f6;
     width: 250px;
+  }
+
+  @media (max-width: 640px) {
+    display: flex;
   }
 `;
 

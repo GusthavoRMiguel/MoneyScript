@@ -34,6 +34,7 @@ export const Saldo = styled.div`
   margin-right: auto;
   align-items: baseline;
 
+  h1,
   span {
     font-size: 2rem;
   }
@@ -45,6 +46,20 @@ export const Saldo = styled.div`
     svg {
       width: 15px;
       height: 15px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    h1,
+    span {
+      font-size: 1.5rem;
+    }
+
+    button {
+      svg {
+        width: 10px;
+        height: 10px;
+      }
     }
   }
 `;

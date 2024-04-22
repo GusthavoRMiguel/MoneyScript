@@ -17,6 +17,9 @@ export const CalendarGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 5px;
+  @media (max-width: 640px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
 `;
 
 export const CalendarMonth = styled.div`
