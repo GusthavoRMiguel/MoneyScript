@@ -38,7 +38,7 @@ export const Heading = styled.div`
 
 export const Content = styled.div`
   display: flex;
-  height: 50vh;
+  height: 55vh;
   margin-bottom: 10vh;
   flex-direction: column;
   @media (max-width: 620px) {

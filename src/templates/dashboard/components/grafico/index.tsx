@@ -13,16 +13,16 @@ import ITransaction from '@/interfaces/ITransaction';
 import { formatDate } from '@/utils/dateFormatter';
 
 interface GraphProps {
-  movimentacoes: ITransaction[];
+  transactions: ITransaction[];
   loading: boolean;
 }
 
-const Grafico: React.FC<GraphProps> = ({ movimentacoes, loading }) => {
+const Grafico: React.FC<GraphProps> = ({ transactions, loading }) => {
   const renderTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const details = payload[0].payload as { data: string; valor: number };
 
-      const transactionsOnDate = movimentacoes.filter(
+      const transactionsOnDate = transactions.filter(
         (movimentacao) => movimentacao.data === details.data
       );
 
@@ -60,7 +60,7 @@ const Grafico: React.FC<GraphProps> = ({ movimentacoes, loading }) => {
     return null;
   };
 
-  const groupDataByDate = movimentacoes.reduce((acc: any, movimentacao) => {
+  const groupDataByDate = transactions.reduce((acc: any, movimentacao) => {
     const { data, valor } = movimentacao;
     const existingItemIndex = acc.findIndex((item: any) => item.data === data);
 
@@ -76,7 +76,6 @@ const Grafico: React.FC<GraphProps> = ({ movimentacoes, loading }) => {
     return acc;
   }, []);
 
-  // Ordena os dados pela data
   const sortedData = groupDataByDate.sort((a: any, b: any) => {
     const dateA = new Date(a.data);
     const dateB = new Date(b.data);

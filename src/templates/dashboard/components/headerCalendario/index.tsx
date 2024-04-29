@@ -1,106 +1,55 @@
-import React, { useState, useRef, useEffect } from 'react';
-import {
-  Container,
-  Button,
-  SelectContainer,
-  IconContainer,
-  Dropdown,
-  SelectedValue
-} from './styles';
-import { FaRegCalendarAlt } from 'react-icons/fa';
+import React from 'react';
 
-interface HeaderCalendarioProps {
+import View from './view';
+import useService from './service';
+
+interface CalendaryProps {
   handlePrevious: () => void;
   handleNext: () => void;
   handleChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => void;
-
   selected: string | number;
-  type?: string;
   year?: boolean;
 }
 
-const HeaderCalendario: React.FC<HeaderCalendarioProps> = ({
+const CalendaryHeader: React.FC<CalendaryProps> = ({
   handlePrevious,
   handleNext,
   handleChange,
   selected,
-  type = 'text',
+
   year
 }) => {
-  const [dropdownVisible, setDropdownVisible] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const {
+    dropdownVisible,
+    dropdownRef,
+    years,
+    toggleDropdown,
+    handleYearSelection
+  } = useService({
+    handlePrevious,
+    handleNext,
+    handleChange,
+    selected,
 
-  const toggleDropdown = () => {
-    setDropdownVisible(!dropdownVisible);
-  };
-
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(event.target as Node)
-    ) {
-      setDropdownVisible(false);
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  const handleYearSelection = (year: number) => {
-    handleChange({ target: { value: year } } as any);
-    setDropdownVisible(false);
-  };
-
-  const renderInput = () => {
-    if (type === 'date') {
-      return <input type={type} value={selected} onChange={handleChange} />;
-    }
-
-    if (year) {
-      const currentYear = new Date().getFullYear();
-      const startYear = currentYear - 10;
-      const endYear = currentYear + 10;
-      const years = Array.from(
-        { length: endYear - startYear + 1 },
-        (_, i) => startYear + i
-      );
-
-      return (
-        <SelectContainer onClick={toggleDropdown}>
-          {' '}
-          <SelectedValue>{selected}</SelectedValue>
-          <IconContainer>
-            <FaRegCalendarAlt />
-          </IconContainer>
-          {dropdownVisible && (
-            <Dropdown ref={dropdownRef}>
-              {years.map((year) => (
-                <div key={year} onClick={() => handleYearSelection(year)}>
-                  {year}
-                </div>
-              ))}
-            </Dropdown>
-          )}
-        </SelectContainer>
-      );
-    }
-
-    return <input type={type} value={selected} onChange={handleChange} />;
-  };
+    year
+  });
 
   return (
-    <Container>
-      <Button onClick={handlePrevious}>Anterior</Button>
-      {renderInput()}
-      <Button onClick={handleNext}>Próximo</Button>
-    </Container>
+    <View
+      selected={selected}
+      year={year}
+      dropdownVisible={dropdownVisible}
+      dropdownRef={dropdownRef}
+      years={years}
+      toggleDropdown={toggleDropdown}
+      handlePrevious={handlePrevious}
+      handleNext={handleNext}
+      handleChange={handleChange}
+      handleYearSelection={handleYearSelection}
+    />
   );
 };
 
-export default HeaderCalendario;
+export default CalendaryHeader;

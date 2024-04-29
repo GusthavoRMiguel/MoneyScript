@@ -102,6 +102,10 @@ export const Dropdown = styled.div`
       background-color: #f0f0f0;
     }
   }
+
+  @media (max-width: 640px) {
+    grid-template-columns: repeat(1, 1fr);
+  }
 `;
 
 export const Button = styled.button`

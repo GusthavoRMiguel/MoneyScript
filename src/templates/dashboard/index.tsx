@@ -8,8 +8,8 @@ import {
   ContentContainer,
   SidebarContainer
 } from './styles';
-import DashAnual from './components/dashAnual';
-import DashMensal from './components/dashMensal';
+
+import Dash from './components/dash';
 
 const Dashboard: React.FC = () => {
   const [visible, setVisible] = useState(true);
@@ -55,8 +55,7 @@ const Dashboard: React.FC = () => {
           </SemanticMenu.Item>
         </SidebarContainer>
         <ContentContainer>
-          {selectedOption === 'DashAnual' && <DashAnual />}
-          {selectedOption === 'DashMensal' && <DashMensal />}
+          <Dash dashAnual={selectedOption === 'DashAnual'} />
         </ContentContainer>
       </Content>
     </Container>

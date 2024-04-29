@@ -60,6 +60,14 @@ export const TableHeader = styled.th`
     gap: 10px;
     margin: auto;
   }
+  @media (max-width: 640px) {
+    font-size: 7px;
+    padding: 6px 2px;
+    button {
+      font-size: 7px;
+      gap: 5px;
+    }
+  }
 `;
 
 export const TableData = styled.td`
@@ -73,6 +81,11 @@ export const TableData = styled.td`
     margin-inline: auto;
     background-color: transparent;
     border: none;
+  }
+
+  @media (max-width: 640px) {
+    font-size: 6px;
+    padding: 6px 2px;
   }
 `;
 

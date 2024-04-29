@@ -1,27 +1,30 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   CalendarContainer,
   CalendarMonth,
   CalendarGrid,
-  DetailCard
+  DetailCard,
+  Total
 } from './styles';
 import { Modal, Button, Dimmer, Loader } from 'semantic-ui-react';
 import ITransaction from '@/interfaces/ITransaction';
 import { formatDate } from '@/utils/dateFormatter';
 
 interface Props {
-  movimentacoes: ITransaction[];
+  transactions: ITransaction[];
   loading: boolean;
   currentYear: number;
 }
 
 const CalendarioAnual: React.FC<Props> = ({
-  movimentacoes,
+  transactions,
   loading,
   currentYear
 }) => {
-  const [selectedMonth, setSelectedMonth] = React.useState<number | null>(null);
+  const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
   const currentMonthIndex = new Date().getMonth();
+  const currentYearNow = new Date().getFullYear();
+  const [totalForSelectedMonth, setTotalForSelectedMonth] = useState<number>(0);
 
   const calculateBalanceForMonth = (monthIndex: number): number => {
     const firstDayOfMonth = new Date(currentYear, monthIndex, 1)
@@ -31,7 +34,7 @@ const CalendarioAnual: React.FC<Props> = ({
       .toISOString()
       .slice(0, 10);
 
-    const transactionsForMonth = movimentacoes.filter((movimentacao) => {
+    const transactionsForMonth = transactions.filter((movimentacao) => {
       const transactionDate = new Date(movimentacao.data)
         .toISOString()
         .slice(0, 10);
@@ -97,8 +100,8 @@ const CalendarioAnual: React.FC<Props> = ({
       monthClassName = 'grey-balance';
     }
 
-    if (monthIndex === currentMonthIndex) {
-      monthClassName += 'current-month';
+    if (monthIndex === currentMonthIndex && currentYear === currentYearNow) {
+      monthClassName += ' current-month';
     }
 
     return (
@@ -113,6 +116,13 @@ const CalendarioAnual: React.FC<Props> = ({
       </CalendarMonth>
     );
   };
+
+  useEffect(() => {
+    if (selectedMonth !== null) {
+      const total = calculateBalanceForMonth(selectedMonth);
+      setTotalForSelectedMonth(total);
+    }
+  }, [selectedMonth, currentYear, transactions]);
 
   return (
     <CalendarContainer>
@@ -134,11 +144,11 @@ const CalendarioAnual: React.FC<Props> = ({
           onClose={() => setSelectedMonth(null)}
         >
           <Modal.Header>Detalhes do Mês</Modal.Header>
-          <Modal.Content>
+          <Modal.Content scrolling>
             <p>Detalhamento das movimentações:</p>
             <ul>
               {getTransactionsForMonth(
-                movimentacoes,
+                transactions,
                 selectedMonth,
                 currentYear
               ).map((transaction, index) => (
@@ -157,6 +167,12 @@ const CalendarioAnual: React.FC<Props> = ({
               ))}
             </ul>
           </Modal.Content>
+          <Modal.Description>
+            <Total>
+              <h1>Total:</h1>
+              <span>R$ {totalForSelectedMonth.toLocaleString('pt-br')}</span>
+            </Total>
+          </Modal.Description>
           <Modal.Actions>
             <Button onClick={() => setSelectedMonth(null)}>Fechar</Button>
           </Modal.Actions>

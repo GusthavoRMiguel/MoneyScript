@@ -3,7 +3,7 @@ import theme from '@/styles/theme';
 
 export const CalendarContainer = styled.div`
   width: 50%;
-  height: 50vh;
+  height: 55vh;
   padding: 1rem;
   border: solid 1px;
 
@@ -52,8 +52,8 @@ export const CalendarMonth = styled.div`
   }
 
   &.current-month {
-    border: solid 2px;
-    color: white;
+    border-bottom: solid 2px;
+    filter: brightness(115%);
   }
 `;
 
@@ -69,5 +69,22 @@ export const DetailCard = styled.div`
 
   &.saida {
     background-color: #ff9999;
+  }
+`;
+
+export const Total = styled.div`
+  display: flex;
+  align-items: center;
+  place-content: center;
+  gap: 10px;
+  padding: 1rem;
+  border: solid 1px;
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  span {
+    font-size: 1.5rem;
   }
 `;

@@ -9,7 +9,7 @@ const spin = keyframes`
 
 export const Container = styled.div`
   width: 50%;
-  height: 50vh;
+  height: 55vh;
   border: solid 1px ${theme.colors.blackQuantum};
 
   @media (max-width: 640px) {

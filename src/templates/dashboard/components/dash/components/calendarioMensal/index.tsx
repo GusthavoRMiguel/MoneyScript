@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {
-  CalendarContainer,
-  CalendarDay,
-  CalendarGrid,
-  DetailCard
+  CalendaryContainer,
+  CalendaryHeader,
+  CalendaryGrid,
+  CalendaryDay,
+  DetailCard,
+  Total
 } from './style';
 import { Button, Modal } from 'semantic-ui-react';
 import ITransaction from '@/interfaces/ITransaction';
@@ -20,6 +22,7 @@ const CalendarioMensal: React.FC<Props> = ({
   currentDate
 }) => {
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
+  const [totalForSelectedDay, setTotalForSelectedDay] = useState<number>(0);
 
   const handleDayClick = (day: string) => {
     setSelectedDay(day);
@@ -50,9 +53,10 @@ const CalendarioMensal: React.FC<Props> = ({
       currentDate.getMonth() + 1,
       0
     ).getDate();
+    const today = new Date();
 
     for (let i = 1; i <= firstDayOfMonth; i++) {
-      days.push(<CalendarDay key={`empty-${i}`} />);
+      days.push(<CalendaryDay key={`empty-${i}`} />);
     }
 
     for (let i = 1; i <= daysInMonth; i++) {
@@ -71,17 +75,24 @@ const CalendarioMensal: React.FC<Props> = ({
         dayClassName = 'grey-balance';
       }
 
-      const dateObj = new Date(day);
-      const dayOfWeek = dateObj.getDay();
+      const currentDateFormatted = `${today.getFullYear()}-${(
+        today.getMonth() + 1
+      )
+        .toString()
+        .padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`;
+
+      if (day === currentDateFormatted) {
+        dayClassName += ' current-day';
+      }
 
       days.push(
-        <CalendarDay
+        <CalendaryDay
           key={day}
           className={`${dayClassName} ${selectedDay === day ? 'selected' : ''}`}
           onClick={() => handleDayClick(day)}
         >
           <span>{i}</span>
-        </CalendarDay>
+        </CalendaryDay>
       );
     }
 
@@ -95,9 +106,16 @@ const CalendarioMensal: React.FC<Props> = ({
     });
   };
 
+  useEffect(() => {
+    if (selectedDay !== null) {
+      const total = calculateBalanceForDay(selectedDay);
+      setTotalForSelectedDay(total);
+    }
+  }, [selectedDay, currentDate, movimentacoes]);
+
   return (
-    <CalendarContainer>
-      <CalendarGrid>
+    <CalendaryContainer>
+      <CalendaryHeader>
         <div>Domingo</div>
         <div>Segunda</div>
         <div>Terça</div>
@@ -105,12 +123,14 @@ const CalendarioMensal: React.FC<Props> = ({
         <div>Quinta</div>
         <div>Sexta</div>
         <div>Sábado</div>
+      </CalendaryHeader>
+      <CalendaryGrid>
         {loading ? <div>Carregando...</div> : renderDaysOfMonth()}
-      </CalendarGrid>
+      </CalendaryGrid>
       {selectedDay !== null && (
         <Modal open={selectedDay !== null} onClose={() => setSelectedDay(null)}>
           <Modal.Header>Detalhes do Dia </Modal.Header>
-          <Modal.Content>
+          <Modal.Content scrolling>
             {getTransactionsForSelectedDay().length !== 0 ? (
               <>
                 <p>Detalhamento das movimentações :</p>
@@ -136,12 +156,19 @@ const CalendarioMensal: React.FC<Props> = ({
               <p>Nenhuma transação.</p>
             )}
           </Modal.Content>
+
+          <Modal.Description>
+            <Total>
+              <h1>Total:</h1>
+              <span>R$ {totalForSelectedDay.toLocaleString('pt-br')}</span>
+            </Total>
+          </Modal.Description>
           <Modal.Actions>
             <Button onClick={() => setSelectedDay(null)}>Fechar</Button>
           </Modal.Actions>
         </Modal>
       )}
-    </CalendarContainer>
+    </CalendaryContainer>
   );
 };
 
