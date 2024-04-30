@@ -13,6 +13,11 @@ export const Container = styled.div`
   max-height: 400px;
   overflow-y: auto;
   border: solid 1px ${theme.colors.blackQuantum};
+
+  &.loading {
+    overflow-y: hidden;
+    text-align: center;
+  }
 `;
 
 export const Table = styled.table`
@@ -83,9 +88,19 @@ export const TableData = styled.td`
     border: none;
   }
 
+  &.noData {
+    text-align: center;
+    font-size: 1.5rem;
+    padding: 5rem;
+  }
+
   @media (max-width: 640px) {
     font-size: 6px;
     padding: 6px 2px;
+
+    &.noData {
+      padding: 2rem;
+    }
   }
 `;
 

@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import {
-  CalendarContainer,
-  CalendarMonth,
-  CalendarGrid,
+  CalendaryContainer,
+  CalendaryMonth,
+  CalendaryGrid,
   DetailCard,
-  Total
+  Total,
+  LoadingIcon,
+  ErrorMessage
 } from './styles';
-import { Modal, Button, Dimmer, Loader } from 'semantic-ui-react';
+import { Modal, Button } from 'semantic-ui-react';
 import ITransaction from '@/interfaces/ITransaction';
 import { formatDate } from '@/utils/dateFormatter';
 
@@ -105,7 +107,7 @@ const CalendarioAnual: React.FC<Props> = ({
     }
 
     return (
-      <CalendarMonth
+      <CalendaryMonth
         key={monthIndex}
         className={`${monthClassName} ${
           monthIndex === selectedMonth ? 'selected' : ''
@@ -113,7 +115,7 @@ const CalendarioAnual: React.FC<Props> = ({
         onClick={() => setSelectedMonth(monthIndex)}
       >
         <span>{monthNames[monthIndex]}</span>
-      </CalendarMonth>
+      </CalendaryMonth>
     );
   };
 
@@ -125,17 +127,21 @@ const CalendarioAnual: React.FC<Props> = ({
   }, [selectedMonth, currentYear, transactions]);
 
   return (
-    <CalendarContainer>
+    <CalendaryContainer className={loading ? 'loading' : ''}>
       {loading ? (
-        <Dimmer active>
-          <Loader>Loading</Loader>
-        </Dimmer>
+        <LoadingIcon />
       ) : (
-        <CalendarGrid>
-          {Array.from({ length: 12 }, (_, i) => i).map((monthIndex) =>
-            renderMonth(monthIndex)
+        <>
+          {transactions.length === 0 ? (
+            <ErrorMessage>Sem dados disponíveis</ErrorMessage>
+          ) : (
+            <CalendaryGrid>
+              {Array.from({ length: 12 }, (_, i) => i).map((monthIndex) =>
+                renderMonth(monthIndex)
+              )}
+            </CalendaryGrid>
           )}
-        </CalendarGrid>
+        </>
       )}
 
       {selectedMonth !== null && (
@@ -178,7 +184,7 @@ const CalendarioAnual: React.FC<Props> = ({
           </Modal.Actions>
         </Modal>
       )}
-    </CalendarContainer>
+    </CalendaryContainer>
   );
 };
 

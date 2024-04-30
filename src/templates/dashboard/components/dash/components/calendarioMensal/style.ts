@@ -1,5 +1,11 @@
-import styled from 'styled-components';
-import theme from '@/styles/theme';
+import styled, { keyframes } from 'styled-components';
+
+import { FaSpinner } from 'react-icons/fa';
+
+const spin = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`;
 
 export const CalendaryContainer = styled.div`
   width: 50%;
@@ -8,7 +14,10 @@ export const CalendaryContainer = styled.div`
   border: solid 1px;
   display: flex;
   flex-direction: column;
-
+  &.loading {
+    display: flex;
+    place-content: center;
+  }
   @media (max-width: 640px) {
     width: 100%;
     height: auto;
@@ -105,4 +114,18 @@ export const Total = styled.div`
   span {
     font-size: 1.5rem;
   }
+`;
+export const LoadingIcon = styled(FaSpinner)`
+  font-size: 32px;
+  color: #333;
+  animation: ${spin} 1s linear infinite;
+  align-self: center;
+`;
+export const ErrorMessage = styled.div`
+  padding: 1rem;
+  font-size: 1rem;
+  width: 100%;
+  text-align: center;
+  height: 100%;
+  align-content: center;
 `;

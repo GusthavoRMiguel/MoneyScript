@@ -1,11 +1,10 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useDB } from '@/hooks/Database';
-import ITransactionFilter from '@/interfaces/ITransactionFilter';
+
 import ITransaction from '@/interfaces/ITransaction';
 
 const useService = (dashAnual: boolean) => {
-  const { getTransactionsByFilter, addTransaction, getBalanceForMonth } =
-    useDB();
+  const { getTransactionsForYear, addTransaction } = useDB();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [transactions, setTransactions] = useState<ITransaction[]>([]);
   const [loading, setLoading] = useState(false);
@@ -22,9 +21,14 @@ const useService = (dashAnual: boolean) => {
   const [isBalanceHidden, setIsBalanceHidden] = useState<boolean>(true);
   const [isBalanceAtualHidden, setIsBalanceAtualHidden] =
     useState<boolean>(true);
+  const [isProjectedBalanceHidden, setIsProjectedBalanceHidden] =
+    useState<boolean>(true);
 
   const toggleView = () => {
     setIsBalanceHidden((prevValue) => !prevValue);
+  };
+  const toggleProjectedView = () => {
+    setIsProjectedBalanceHidden((prevValue) => !prevValue);
   };
 
   const toggleAtualView = () => {
@@ -35,43 +39,17 @@ const useService = (dashAnual: boolean) => {
     return '*'.repeat(String(balance).length);
   };
 
-  const getLastDayOfMonth = (year: number, month: number): number => {
-    const date = new Date(year, month + 1, 0);
-    return date.getDate();
-  };
-
   const fetchData = async () => {
     if (dashAnual) {
-      const filterOptions: ITransactionFilter = {
-        dataInicial: `${selectedYear}-01-01`,
-        dataFinal: `${selectedYear}-12-31`
-      };
-      return await getTransactionsByFilter(filterOptions);
+      return await getTransactionsForYear(selectedYear);
     } else {
-      const year = currentDate.getFullYear();
-      const month = currentDate.getMonth() + 1;
-      const formattedMonth = month < 10 ? `0${month}` : `${month}`;
-
-      const filterOptions: ITransactionFilter = {
-        dataInicial: `${year}-${formattedMonth}-01`,
-        dataFinal: `${year}-${formattedMonth}-${getLastDayOfMonth(
-          year,
-          month - 1
-        )}`
-      };
-      return await getTransactionsByFilter(filterOptions);
+      return await getTransactionsForYear(currentDate.getFullYear());
     }
   };
 
   const memoizedTransactions = useMemo(() => {
     return fetchData();
-  }, [
-    dashAnual,
-    selectedYear,
-    currentDate,
-    getTransactionsByFilter,
-    dataUpdated
-  ]);
+  }, [selectedYear, currentDate, getTransactionsForYear, dataUpdated]);
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -153,24 +131,37 @@ const useService = (dashAnual: boolean) => {
   };
 
   const calculateSaldoGeral = async () => {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth() + 1;
-    const balance = await getBalanceForMonth(year, month);
-    setSaldoGeral(balance);
+    const totalSum = transactions.reduce((total, transaction) => {
+      return total + (transaction.valor || 0);
+    }, 0);
+    setSaldoGeral(totalSum);
   };
 
-  const calculateProjecaoAnual = async () => {
-    const year = currentDate.getFullYear();
-    const projecaoCalculada = await getBalanceForMonth(year, 12);
-    setProjecaoAnual(projecaoCalculada);
+  const calculateProjecaoAnual = () => {
+    const totalSum = transactions.reduce((total, transaction) => {
+      return total + (transaction.valor || 0);
+    }, 0);
+    setProjecaoAnual(totalSum);
   };
 
-  const calculateSaldoAtual = async () => {
-    let saldoAtualCalculado = 0;
+  const calculateSaldoAtual = () => {
+    const currentMonth = currentDate.getMonth() + 1;
+    const currentYear = currentDate.getFullYear();
 
-    transactions.forEach((transaction) => {
-      saldoAtualCalculado += transaction?.valor || 0;
-    });
+    const saldoAtualCalculado = transactions.reduce((total, transaction) => {
+      const transactionDate = new Date(transaction.data);
+      const transactionMonth = transactionDate.getMonth() + 1;
+      const transactionYear = transactionDate.getFullYear();
+
+      if (
+        transactionYear === currentYear &&
+        transactionMonth === currentMonth
+      ) {
+        return (total += transaction.valor || 0);
+      } else {
+        return total;
+      }
+    }, 0);
 
     setSaldoAtual(saldoAtualCalculado);
   };
@@ -193,12 +184,14 @@ const useService = (dashAnual: boolean) => {
     loading,
     isBalanceHidden,
     isBalanceAtualHidden,
+    isProjectedBalanceHidden,
     handlePrevious,
     handleNext,
     handleDateChange,
     handleYearChange,
     handleAddTransaction,
     toggleView,
+    toggleProjectedView,
     toggleAtualView,
     formatBalanceToPassword
   };

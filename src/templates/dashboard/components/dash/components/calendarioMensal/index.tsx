@@ -5,7 +5,9 @@ import {
   CalendaryGrid,
   CalendaryDay,
   DetailCard,
-  Total
+  Total,
+  LoadingIcon,
+  ErrorMessage
 } from './style';
 import { Button, Modal } from 'semantic-ui-react';
 import ITransaction from '@/interfaces/ITransaction';
@@ -114,19 +116,29 @@ const CalendarioMensal: React.FC<Props> = ({
   }, [selectedDay, currentDate, movimentacoes]);
 
   return (
-    <CalendaryContainer>
-      <CalendaryHeader>
-        <div>Domingo</div>
-        <div>Segunda</div>
-        <div>Terça</div>
-        <div>Quarta</div>
-        <div>Quinta</div>
-        <div>Sexta</div>
-        <div>Sábado</div>
-      </CalendaryHeader>
-      <CalendaryGrid>
-        {loading ? <div>Carregando...</div> : renderDaysOfMonth()}
-      </CalendaryGrid>
+    <CalendaryContainer className={loading ? 'loading' : ''}>
+      {loading ? (
+        <LoadingIcon />
+      ) : (
+        <>
+          {movimentacoes.length === 0 ? (
+            <ErrorMessage>Sem dados disponíveis</ErrorMessage>
+          ) : (
+            <>
+              <CalendaryHeader>
+                <div>Domingo</div>
+                <div>Segunda</div>
+                <div>Terça</div>
+                <div>Quarta</div>
+                <div>Quinta</div>
+                <div>Sexta</div>
+                <div>Sábado</div>
+              </CalendaryHeader>
+              <CalendaryGrid>{renderDaysOfMonth()}</CalendaryGrid>
+            </>
+          )}
+        </>
+      )}
       {selectedDay !== null && (
         <Modal open={selectedDay !== null} onClose={() => setSelectedDay(null)}>
           <Modal.Header>Detalhes do Dia </Modal.Header>

@@ -214,6 +214,7 @@ const useService = ({ onSubmit }: ServiceProps) => {
   };
 
   return {
+    transaction,
     typeOptions,
     subtypeOptions,
     recurrenceOptions,

@@ -27,11 +27,14 @@ interface DBContextProps {
   addTransaction: (
     transactionData: ITransaction
   ) => Promise<{ success: boolean; error?: any }>;
-  getTransactionsByFilter: (
-    filterOptions: ITransactionFilter
-  ) => Promise<any[]>;
+  updateTransaction: (
+    transactionId: string,
+    newDescription: string,
+    newValue: number
+  ) => Promise<void>;
   removeTransaction: (transactionId: string) => Promise<void>;
-  getBalanceForMonth: (year: number, month: number) => Promise<number>;
+
+  getTransactionsForYear: (year: number) => Promise<ITransaction[]>;
 }
 
 const DBContext = createContext<DBContextProps | undefined>(undefined);
@@ -211,50 +214,31 @@ export function DBProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const getTransactionsByFilter = async (filterOptions: ITransactionFilter) => {
-    console.log('hook', filterOptions);
+  const updateTransaction = async (
+    transactionId: string,
+    newDescription: string,
+    newValue: number
+  ) => {
     try {
       const id = user?.uid;
       if (!id) {
-        return [];
+        console.error('User not authenticated');
+        return;
       }
 
       const userRef = firebase.firestore().collection('users').doc(id);
-      const transactionsRef = userRef.collection('transactions');
+      const transactionRef = userRef
+        .collection('transactions')
+        .doc(transactionId);
 
-      let query: firebase.firestore.Query<firebase.firestore.DocumentData> =
-        transactionsRef;
-
-      if (filterOptions.dataInicial && filterOptions.dataFinal) {
-        query = query
-          .where('data', '>=', filterOptions.dataInicial)
-          .where('data', '<=', filterOptions.dataFinal);
-      }
-
-      if (filterOptions.tipo) {
-        query = query.where('tipo', '==', filterOptions.tipo);
-      }
-
-      if (filterOptions.titulo) {
-        query = query.where('titulo', '==', filterOptions.titulo);
-      }
-
-      query = query.orderBy('data', 'desc');
-
-      const querySnapshot = await query.get();
-      const transactions: ITransaction[] = [];
-
-      querySnapshot.forEach((doc) => {
-        const transactionData = doc.data() as ITransaction;
-        const transactionId = doc.id;
-        const transactionWithId = { ...transactionData, id: transactionId };
-        transactions.push(transactionWithId);
+      await transactionRef.update({
+        descricao: newDescription,
+        valor: newValue
       });
 
-      return transactions;
+      console.log('Transaction updated successfully');
     } catch (error) {
-      console.error('Error fetching transactions: ', error);
-      return [];
+      console.error('Error updating transaction: ', error);
     }
   };
 
@@ -277,45 +261,33 @@ export function DBProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const getBalanceForMonth = async (year: number, month: number) => {
+  const getTransactionsForYear = async (year: number) => {
     try {
       const id = user?.uid;
       if (!id) {
-        return 0;
+        return [];
       }
 
       const userRef = firebase.firestore().collection('users').doc(id);
       const transactionsRef = userRef.collection('transactions');
 
-      const lastDayOfMonth = new Date(year, month, 0).getDate();
-
-      const endDate = `${year}-${String(month).padStart(
-        2,
-        '0'
-      )}-${lastDayOfMonth}`;
+      const endDate = `${year}-12-31`;
 
       const querySnapshot = await transactionsRef
-
         .where('data', '<=', endDate)
         .get();
 
-      let totalSum = 0;
+      const transactions: ITransaction[] = [];
 
       querySnapshot.forEach((doc) => {
         const transactionData = doc.data() as ITransaction;
-
-        if (
-          transactionData.valor &&
-          typeof transactionData.valor === 'number'
-        ) {
-          totalSum += transactionData.valor;
-        }
+        transactions.push(transactionData);
       });
 
-      return totalSum;
+      return transactions;
     } catch (error) {
-      console.error('Error getting balance for specific month: ', error);
-      return 0;
+      console.error('Error getting transactions for specific year: ', error);
+      return [];
     }
   };
 
@@ -334,9 +306,9 @@ export function DBProvider({ children }: { children: ReactNode }) {
     addProfessionalData,
     getProfessionalData,
     addTransaction,
-    getTransactionsByFilter,
+    updateTransaction,
     removeTransaction,
-    getBalanceForMonth
+    getTransactionsForYear
   };
 
   return (

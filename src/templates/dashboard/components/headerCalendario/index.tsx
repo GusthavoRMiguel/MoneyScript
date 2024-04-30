@@ -1,6 +1,13 @@
 import React from 'react';
-
-import View from './view';
+import {
+  Container,
+  Button,
+  IconContainer,
+  Dropdown,
+  SelectedValue,
+  SelectContainer
+} from './styles';
+import { FaRegCalendarAlt } from 'react-icons/fa';
 import useService from './service';
 
 interface CalendaryProps {
@@ -18,7 +25,6 @@ const CalendaryHeader: React.FC<CalendaryProps> = ({
   handleNext,
   handleChange,
   selected,
-
   year
 }) => {
   const {
@@ -32,23 +38,32 @@ const CalendaryHeader: React.FC<CalendaryProps> = ({
     handleNext,
     handleChange,
     selected,
-
     year
   });
-
   return (
-    <View
-      selected={selected}
-      year={year}
-      dropdownVisible={dropdownVisible}
-      dropdownRef={dropdownRef}
-      years={years}
-      toggleDropdown={toggleDropdown}
-      handlePrevious={handlePrevious}
-      handleNext={handleNext}
-      handleChange={handleChange}
-      handleYearSelection={handleYearSelection}
-    />
+    <Container>
+      <Button onClick={handlePrevious}>Anterior</Button>
+      {year ? (
+        <SelectContainer onClick={toggleDropdown}>
+          <SelectedValue>{selected}</SelectedValue>
+          <IconContainer>
+            <FaRegCalendarAlt />
+          </IconContainer>
+          {dropdownVisible && (
+            <Dropdown ref={dropdownRef}>
+              {years.map((year) => (
+                <div key={year} onClick={() => handleYearSelection(year)}>
+                  {year}
+                </div>
+              ))}
+            </Dropdown>
+          )}
+        </SelectContainer>
+      ) : (
+        <input type="month" value={selected} onChange={handleChange} />
+      )}
+      <Button onClick={handleNext}>Próximo</Button>
+    </Container>
   );
 };
 

@@ -8,7 +8,8 @@ interface ServiceProps {
 }
 
 const useService = ({ transactions, loading }: ServiceProps) => {
-  const { removeTransaction, getTransactionsByFilter } = useDB();
+  const { removeTransaction, updateTransaction, getTransactionsForYear } =
+    useDB();
 
   const [sortedTransactions, setSortedTransactions] = useState<ITransaction[]>(
     []
@@ -21,6 +22,8 @@ const useService = ({ transactions, loading }: ServiceProps) => {
 
   const [openEditConfirmation, setOpenEditConfirmation] = useState(false);
   const [transactionToEdit, setTransactionToEdit] = useState<string>('');
+  const [newValue, setNewValue] = useState<number>(0);
+  const [newDescription, setNewDescription] = useState<string>('');
 
   useEffect(() => {
     sortTransactions(sortBy);
@@ -76,15 +79,15 @@ const useService = ({ transactions, loading }: ServiceProps) => {
   const handleEdit = (id: string) => {
     setOpenEditConfirmation(true);
     setTransactionToEdit(id);
+    setNewValue(100);
+    setNewDescription('teste edit');
   };
 
   const handleConfirmRemove = async () => {
     try {
       await removeTransaction(transactionToRemove);
-      const updatedTransactions = await getTransactionsByFilter({
-        dataInicial: '',
-        dataFinal: ''
-      });
+      const newCurrentYear = new Date().getFullYear();
+      const updatedTransactions = await getTransactionsForYear(newCurrentYear);
       setSortedTransactions(updatedTransactions);
       setOpenConfirmation(false);
     } catch (error) {
@@ -94,15 +97,13 @@ const useService = ({ transactions, loading }: ServiceProps) => {
 
   const handleConfirmEdit = async () => {
     try {
-      await removeTransaction(transactionToRemove);
-      const updatedTransactions = await getTransactionsByFilter({
-        dataInicial: '',
-        dataFinal: ''
-      });
+      await updateTransaction(transactionToEdit, newDescription, newValue);
+      const newCurrentYear = new Date().getFullYear();
+      const updatedTransactions = await getTransactionsForYear(newCurrentYear);
       setSortedTransactions(updatedTransactions);
       setOpenConfirmation(false);
     } catch (error) {
-      console.error('Error removing transaction:', error);
+      console.error('Error updating transaction:', error);
     }
   };
 
