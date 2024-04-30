@@ -142,39 +142,66 @@ const useService = (dashAnual: boolean) => {
   };
 
   const calculateSaldoGeral = async () => {
-    const totalSum = transactions.reduce((total, transaction) => {
-      return total + (transaction.valor || 0);
-    }, 0);
-    setSaldoGeral(totalSum);
-  };
-
-  const calculateProjecaoAnual = () => {
-    const totalSum = transactions.reduce((total, transaction) => {
-      return total + (transaction.valor || 0);
-    }, 0);
-    setProjecaoAnual(totalSum);
-  };
-
-  const calculateSaldoAtual = () => {
     const currentMonth = currentDate.getMonth() + 1;
-    const currentYear = currentDate.getFullYear();
 
-    const saldoAtualCalculado = transactions.reduce((total, transaction) => {
-      const transactionDate = new Date(transaction.data);
-      const transactionMonth = transactionDate.getMonth() + 1;
-      const transactionYear = transactionDate.getFullYear();
+    const saldoGeralCalculado = transactions.reduce((total, transaction) => {
+      const transactionMonth = new Date(transaction.data).getMonth() + 1;
 
-      if (
-        transactionYear === currentYear &&
-        transactionMonth === currentMonth
-      ) {
-        return (total += transaction.valor || 0);
+      if (transactionMonth <= currentMonth) {
+        return total + (transaction.valor || 0);
       } else {
         return total;
       }
     }, 0);
 
-    setSaldoAtual(saldoAtualCalculado);
+    setSaldoGeral(saldoGeralCalculado);
+  };
+
+  const calculateProjecaoAnual = () => {
+    const currentYear = currentDate.getFullYear();
+
+    const projecaoAnualCalculada = transactions.reduce((total, transaction) => {
+      const transactionYear = new Date(transaction.data).getFullYear();
+
+      if (transactionYear === currentYear) {
+        return total + (transaction.valor || 0);
+      } else {
+        return total;
+      }
+    }, 0);
+
+    setProjecaoAnual(projecaoAnualCalculada);
+  };
+
+  const calculateSaldoAtual = (): void => {
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1;
+
+    const firstDayOfMonth = new Date(currentYear, currentMonth - 1, 1)
+      .toISOString()
+      .slice(0, 10);
+    const lastDayOfMonth = new Date(currentYear, currentMonth, 0)
+      .toISOString()
+      .slice(0, 10);
+
+    // Filtrando as transações do mês atual
+    const transactionsForCurrentMonth = transactions.filter((transaction) => {
+      const transactionDate = new Date(transaction.data)
+        .toISOString()
+        .slice(0, 10);
+      return (
+        transactionDate >= firstDayOfMonth && transactionDate <= lastDayOfMonth
+      );
+    });
+
+    // Calculando o saldo atual
+    let balance = 0;
+    transactionsForCurrentMonth.forEach((transaction) => {
+      balance += transaction.valor || 0;
+    });
+
+    // Atualizando o estado do saldo atual
+    setSaldoAtual(balance);
   };
 
   useEffect(() => {
