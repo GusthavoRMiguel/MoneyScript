@@ -34,6 +34,7 @@ const Dash: React.FC<DashProps> = ({ dashAnual }) => {
     toggleAtualView,
     toggleProjectedView,
     formatBalanceToPassword,
+    handleDataUpdate,
     selectedYear
   } = useService(dashAnual);
 
@@ -122,7 +123,11 @@ const Dash: React.FC<DashProps> = ({ dashAnual }) => {
           <Grafico transactions={transactions} loading={loading} />
         </S.Flex>
         <S.Flex>
-          <Statement transactions={transactions} loading={loading} />
+          <Statement
+            transactions={transactions}
+            loading={loading}
+            dataUpdate={handleDataUpdate}
+          />
         </S.Flex>
       </S.Content>
     </S.Container>

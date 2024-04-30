@@ -5,11 +5,11 @@ import { useDB } from '@/hooks/Database';
 interface ServiceProps {
   transactions: ITransaction[];
   loading: boolean;
+  dataUpdate: () => void;
 }
 
-const useService = ({ transactions, loading }: ServiceProps) => {
-  const { removeTransaction, updateTransaction, getTransactionsForYear } =
-    useDB();
+const useService = ({ transactions, loading, dataUpdate }: ServiceProps) => {
+  const { removeTransaction, updateTransaction } = useDB();
 
   const [sortedTransactions, setSortedTransactions] = useState<ITransaction[]>(
     []
@@ -85,10 +85,30 @@ const useService = ({ transactions, loading }: ServiceProps) => {
 
   const handleConfirmRemove = async () => {
     try {
+      // Remove a transação do banco de dados
       await removeTransaction(transactionToRemove);
-      const newCurrentYear = new Date().getFullYear();
-      const updatedTransactions = await getTransactionsForYear(newCurrentYear);
-      setSortedTransactions(updatedTransactions);
+
+      // Atualiza o estado local dos dados
+      dataUpdate();
+
+      // Remove a transação do localStorage
+      const storedData = localStorage.getItem('transactionsData');
+      if (storedData) {
+        const existingData = JSON.parse(storedData);
+        const updatedTransactions = existingData.transactions.filter(
+          (transaction: { id: string }) =>
+            transaction.id !== transactionToRemove
+        );
+        localStorage.setItem(
+          'transactionsData',
+          JSON.stringify({
+            ...existingData,
+            transactions: updatedTransactions
+          })
+        );
+      }
+
+      // Fecha o modal de confirmação
       setOpenConfirmation(false);
     } catch (error) {
       console.error('Error removing transaction:', error);
@@ -98,9 +118,7 @@ const useService = ({ transactions, loading }: ServiceProps) => {
   const handleConfirmEdit = async () => {
     try {
       await updateTransaction(transactionToEdit, newDescription, newValue);
-      const newCurrentYear = new Date().getFullYear();
-      const updatedTransactions = await getTransactionsForYear(newCurrentYear);
-      setSortedTransactions(updatedTransactions);
+      dataUpdate();
       setOpenConfirmation(false);
     } catch (error) {
       console.error('Error updating transaction:', error);

@@ -141,7 +141,9 @@ const CalendarioMensal: React.FC<Props> = ({
       )}
       {selectedDay !== null && (
         <Modal open={selectedDay !== null} onClose={() => setSelectedDay(null)}>
-          <Modal.Header>Detalhes do Dia </Modal.Header>
+          <Modal.Header>
+            Detalhes do Dia {selectedDay.split('-')[2]}{' '}
+          </Modal.Header>
           <Modal.Content scrolling>
             {getTransactionsForSelectedDay().length !== 0 ? (
               <>

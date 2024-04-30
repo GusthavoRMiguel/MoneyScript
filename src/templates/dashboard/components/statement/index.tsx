@@ -8,13 +8,19 @@ import {
 import * as S from './style';
 import ITransaction from '@/interfaces/ITransaction';
 import useService from './service';
+import { formatDate } from '@/utils/dateFormatter';
 
 interface StatementProps {
   transactions: ITransaction[];
   loading: boolean;
+  dataUpdate: () => void;
 }
 
-const Statement: React.FC<StatementProps> = ({ transactions, loading }) => {
+const Statement: React.FC<StatementProps> = ({
+  transactions,
+  loading,
+  dataUpdate
+}) => {
   const {
     sortedTransactions,
     sortDirection,
@@ -27,7 +33,7 @@ const Statement: React.FC<StatementProps> = ({ transactions, loading }) => {
     handleConfirmEdit,
     handleCancelRemove,
     handleConfirmRemove
-  } = useService({ transactions, loading });
+  } = useService({ transactions, loading, dataUpdate });
 
   return (
     <S.Container className={loading ? 'loading' : ''}>
@@ -80,7 +86,7 @@ const Statement: React.FC<StatementProps> = ({ transactions, loading }) => {
                     transaction.tipo === 'entrada' ? 'entrada' : 'saida'
                   }
                 >
-                  <S.TableData>{transaction.data}</S.TableData>
+                  <S.TableData>{formatDate(transaction.data)}</S.TableData>
                   <S.TableData>{transaction.tipo}</S.TableData>
                   <S.TableData>{transaction.titulo}</S.TableData>
                   <S.TableData>{transaction.descricao}</S.TableData>

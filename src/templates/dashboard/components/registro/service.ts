@@ -14,85 +14,24 @@ const useService = ({ onSubmit }: ServiceProps) => {
   const [transaction, setTransaction] = useState<ITransaction>({
     id: '',
     data: '',
-    tipo: '',
-    titulo: '',
+    tipo: '0',
+    titulo: '0',
     descricao: '',
     valor: undefined,
     isRecorrente: false,
-    recorrenciaMeses: 3
+    recorrenciaMeses: 0
   });
   const [errors, setErrors] = useState<Partial<ITransaction>>({});
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-
-    setTransaction((prevState) => ({
-      ...prevState,
-      [name]: value
-    }));
-
-    if (name === 'isRecorrente' && !value) {
-      setTransaction((prevState) => ({
-        ...prevState,
-        recorrenciaMeses: 3
-      }));
-    }
-  };
-
-  const handleCheckboxChange = (
-    e: React.FormEvent<HTMLInputElement>,
-    data: CheckboxProps
-  ) => {
-    const { name, checked } = data;
-
-    if (typeof name !== 'string') {
-      return;
-    }
-
-    setTransaction((prevState) => {
-      const updatedState = { ...prevState, [name]: checked };
-
-      if (name === 'isRecorrente' && !checked) {
-        updatedState.recorrenciaMeses = 3;
-      }
-
-      return updatedState;
-    });
-  };
-
   const recurrenceOptions = [
+    { key: '0', text: 'Selecione', value: 0 },
     { key: '3meses', text: '3 meses', value: 3 },
     { key: '6meses', text: '6 meses', value: 6 },
     { key: '12meses', text: '12 meses', value: 12 }
   ];
 
-  const validationSchema = Yup.object().shape({
-    data: Yup.date().required('A data é obrigatória'),
-    tipo: Yup.string().required('O tipo é obrigatório'),
-    titulo: Yup.string().required('O subtipo é obrigatório'),
-    valor: Yup.number().required('O valor é obrigatório'),
-    descricao: Yup.string().when('titulo', ([titulo], schema) => {
-      return titulo === 'outros'
-        ? schema.required(
-            'A descrição é obrigatória quando o subtipo é "outros"'
-          )
-        : schema;
-    }),
-    recorrenciaMeses: Yup.number().when(
-      'isRecorrente',
-      (isRecorrente, schema) => {
-        return isRecorrente
-          ? schema
-              .required('A recorrência é obrigatória')
-              .oneOf([3, 6, 12], 'Opção inválida')
-          : schema;
-      }
-    )
-  });
-
   const typeOptions = [
+    { key: '0', text: 'Selecione um tipo', value: '0' },
     { key: 'entrada', text: 'Entrada', value: 'entrada' },
     { key: 'saida', text: 'Saída', value: 'saida' }
   ];
@@ -100,6 +39,7 @@ const useService = ({ onSubmit }: ServiceProps) => {
   const subtypeOptions =
     transaction.tipo === 'entrada'
       ? [
+          { key: '0', text: 'Selecione um subtipo', value: '0' },
           { key: 'bonus', text: 'Bônus', value: 'bonus' },
           { key: 'comissao', text: 'Comissão', value: 'comissao' },
           { key: 'emprestimo', text: 'Empréstimo', value: 'emprestimo' },
@@ -110,6 +50,7 @@ const useService = ({ onSubmit }: ServiceProps) => {
           { key: 'venda', text: 'Venda', value: 'venda' }
         ]
       : [
+          { key: '0', text: 'Selecione um subtipo', value: '0' },
           { key: 'alimentacao', text: 'Alimentação', value: 'alimentacao' },
           { key: 'aluguel', text: 'Aluguel', value: 'aluguel' },
           { key: 'assinaturas', text: 'Assinaturas', value: 'assinaturas' },
@@ -152,12 +93,75 @@ const useService = ({ onSubmit }: ServiceProps) => {
           { key: 'transporte', text: 'Transporte', value: 'transporte' }
         ];
 
+  const validationSchema = Yup.object().shape({
+    data: Yup.date().required('A data é obrigatória'),
+    tipo: Yup.string().required('O tipo é obrigatório'),
+    titulo: Yup.string().required('O subtipo é obrigatório'),
+    valor: Yup.number().required('O valor é obrigatório'),
+    descricao: Yup.string().when('titulo', ([titulo], schema) => {
+      return titulo === 'outros'
+        ? schema.required(
+            'A descrição é obrigatória quando o subtipo é "outros"'
+          )
+        : schema;
+    }),
+    recorrenciaMeses: Yup.number().when(
+      'isRecorrente',
+      (isRecorrente, schema) => {
+        return isRecorrente
+          ? schema
+              .required('A recorrência é obrigatória')
+              .oneOf([0, 3, 6, 12], 'Opção inválida')
+          : schema;
+      }
+    )
+  });
+
   const handleModalOpen = () => {
     setModalOpen(true);
   };
 
   const handleModalClose = () => {
     setModalOpen(false);
+  };
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+
+    setTransaction((prevState) => ({
+      ...prevState,
+      [name]: value
+    }));
+
+    if (name === 'isRecorrente' && !value) {
+      setTransaction((prevState) => ({
+        ...prevState,
+        recorrenciaMeses: 3
+      }));
+    }
+  };
+
+  const handleCheckboxChange = (
+    e: React.FormEvent<HTMLInputElement>,
+    data: CheckboxProps
+  ) => {
+    const { name, checked } = data;
+
+    if (typeof name !== 'string') {
+      return;
+    }
+
+    setTransaction((prevState) => {
+      const updatedState = { ...prevState, [name]: checked };
+
+      if (name === 'isRecorrente' && !checked) {
+        updatedState.recorrenciaMeses = 3;
+      }
+
+      return updatedState;
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -185,12 +189,12 @@ const useService = ({ onSubmit }: ServiceProps) => {
       setTransaction({
         id: '',
         data: '',
-        tipo: '',
-        titulo: '',
+        tipo: '0',
+        titulo: '0',
         descricao: '',
         valor: undefined,
         isRecorrente: false,
-        recorrenciaMeses: 3
+        recorrenciaMeses: 0
       });
       handleModalClose();
     } catch (error) {

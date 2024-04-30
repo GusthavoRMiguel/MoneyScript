@@ -204,9 +204,14 @@ export function DBProvider({ children }: { children: ReactNode }) {
       if (!id) {
         return { success: false, error: 'User not authenticated' };
       }
+
       const userRef = firebase.firestore().collection('users').doc(id);
       const transactionsRef = userRef.collection('transactions');
-      await transactionsRef.add(transactionData);
+      const docRef = await transactionsRef.add(transactionData);
+      const transactionId = docRef.id;
+      transactionData.id = transactionId;
+      await docRef.update({ id: transactionId });
+
       return { success: true };
     } catch (error) {
       console.error('Error adding transaction: ', error);
