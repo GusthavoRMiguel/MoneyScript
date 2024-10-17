@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { Sidebar } from 'semantic-ui-react';
+import theme from '@/styles/theme';
 
 export const Container = styled.div`
   display: flex;
@@ -20,6 +21,10 @@ export const SidebarContainer = styled(Sidebar)`
   &&& {
     background-color: #f3f4f6;
     width: 250px;
+  }
+
+  .user {
+    display: flex;
   }
 
   @media (max-width: 640px) {

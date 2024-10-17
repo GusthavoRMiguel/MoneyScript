@@ -3,10 +3,10 @@ import Document, {
   Head,
   Main,
   NextScript,
-  DocumentContext,
-} from "next/document";
+  DocumentContext
+} from 'next/document';
 
-import { ServerStyleSheet } from "styled-components";
+import { ServerStyleSheet } from 'styled-components';
 
 export default class MyDocument extends Document {
   static async getInitialProps(ctx: DocumentContext) {
@@ -17,7 +17,7 @@ export default class MyDocument extends Document {
       ctx.renderPage = () =>
         originalRenderPage({
           enhanceApp: (App) => (props) =>
-            sheet.collectStyles(<App {...props} />),
+            sheet.collectStyles(<App {...props} />)
         });
 
       const initialProps = await Document.getInitialProps(ctx);
@@ -27,8 +27,8 @@ export default class MyDocument extends Document {
           <>
             {initialProps.styles}
             {sheet.getStyleElement()}
-          </>,
-        ],
+          </>
+        ]
       };
     } finally {
       sheet.seal();
@@ -38,7 +38,12 @@ export default class MyDocument extends Document {
   render() {
     return (
       <Html lang="pt-BR">
-        <Head />
+        <Head>
+          <title>Money Script</title>
+          <link rel="shorcut icon" href="/assets/icon.png" />
+          <link rel="manifest" href="/manifest.json" />
+          <meta name="description" content="Project" />
+        </Head>
         <body>
           <Main />
           <NextScript />

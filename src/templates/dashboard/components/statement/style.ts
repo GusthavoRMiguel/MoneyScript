@@ -33,6 +33,18 @@ export const Table = styled.table`
     overflow-y: auto;
     border: solid 1px ${theme.colors.gray_300};
   }
+
+  @media (max-width: 640px) {
+    display: flex;
+    flex-direction: column;
+
+    tbody {
+      display: flex;
+      flex-direction: column;
+      overflow-y: scroll;
+      gap: 5px;
+    }
+  }
 `;
 
 export const TableRow = styled.tr`
@@ -48,6 +60,44 @@ export const TableRow = styled.tr`
   &.saida {
     font-weight: 700;
     box-shadow: inset 0 0 8px 0 ${theme.colors.red_50};
+  }
+
+  @media (max-width: 640px) {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Define 2 colunas de largura igual */
+    grid-template-rows: repeat(3, auto); /* Define 3 linhas automáticas */
+
+    /* Primeira coluna (itens 1, 2 e 3) */
+    & > :nth-child(1) {
+      grid-column: 1; /* Coloca na primeira coluna */
+      grid-row: 1; /* Primeira linha */
+    }
+
+    & > :nth-child(2) {
+      grid-column: 1; /* Coloca na primeira coluna */
+      grid-row: 2; /* Segunda linha */
+    }
+
+    & > :nth-child(5) {
+      grid-column: 1; /* Coloca na primeira coluna */
+      grid-row: 3; /* Terceira linha */
+    }
+
+    /* Segunda coluna (itens 4, 5 e 6) */
+    & > :nth-child(4) {
+      grid-column: 2; /* Coloca na segunda coluna */
+      grid-row: 1; /* Primeira linha */
+    }
+
+    & > :nth-child(3) {
+      grid-column: 2; /* Coloca na segunda coluna */
+      grid-row: 2; /* Segunda linha */
+    }
+
+    & > :nth-child(6) {
+      grid-column: 2; /* Coloca na segunda coluna */
+      grid-row: 3; /* Terceira linha */
+    }
   }
 `;
 
@@ -66,6 +116,9 @@ export const TableHeader = styled.th`
     margin: auto;
   }
   @media (max-width: 640px) {
+    &.hiddenMobile {
+      display: none;
+    }
     font-size: 7px;
     padding: 6px 2px;
     button {

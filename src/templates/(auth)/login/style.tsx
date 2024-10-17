@@ -16,15 +16,15 @@ export const Container = styled.main`
     padding: 20px;
     border-radius: 10px;
     min-width: 430px;
-    border-color: skyblue;
+    border: solid 1px #afafaf;
+    box-shadow: 0px 0px 20px 10px #afafaf;
     background-color: white;
   }
 
   @media (max-width: 620px) {
-    height: 100%;
     form.flexForm {
       min-width: 90%;
-      margin-top: 25%;
+      margin-bottom: 5rem;
     }
   }
 `;

@@ -53,9 +53,8 @@ const Statement: React.FC<StatementProps> = ({
                   )}
                 </button>
               </S.TableHeader>
-              <S.TableHeader>Tipo</S.TableHeader>
-              <S.TableHeader>Titulo</S.TableHeader>
-              <S.TableHeader>Descrição</S.TableHeader>
+              <S.TableHeader className="hiddenMobile">Titulo</S.TableHeader>
+              <S.TableHeader className="hiddenMobile">Descrição</S.TableHeader>
               <S.TableHeader>
                 <button onClick={() => handleSort('valor')}>
                   Valor
@@ -66,8 +65,8 @@ const Statement: React.FC<StatementProps> = ({
                   )}
                 </button>
               </S.TableHeader>
-              <S.TableHeader>Editar</S.TableHeader>
-              <S.TableHeader>Remover</S.TableHeader>
+              <S.TableHeader className="hiddenMobile">Editar</S.TableHeader>
+              <S.TableHeader className="hiddenMobile">Remover</S.TableHeader>
             </S.TableRow>
           </thead>
 
@@ -87,9 +86,9 @@ const Statement: React.FC<StatementProps> = ({
                   }
                 >
                   <S.TableData>{formatDate(transaction.data)}</S.TableData>
-                  <S.TableData>{transaction.tipo}</S.TableData>
                   <S.TableData>{transaction.titulo}</S.TableData>
                   <S.TableData>{transaction.descricao}</S.TableData>
+
                   <S.TableData>
                     R$ {transaction.valor?.toLocaleString('pt-br')}
                   </S.TableData>

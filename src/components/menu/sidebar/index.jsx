@@ -1,15 +1,21 @@
-'use client';
 import React from 'react';
 import Link from 'next/link';
+import { useAuth } from '@/hooks/Auth'; // Importe seu hook useAuth ou contexto de autenticação
 
 import { Overlay, SidebarContainer, CloseButton, Links } from './styles';
-import {
-  AiOutlineHome,
-  AiOutlineInfoCircle,
-  AiOutlineClose
-} from 'react-icons/ai';
+import { AiOutlineClose } from 'react-icons/ai';
 
 const Sidebar = ({ open, onClose }) => {
+  const { user, signout } = useAuth(); // Utilize o contexto de autenticação
+
+  const handleLogout = async () => {
+    try {
+      await signout(); // Chame a função de logout do seu contexto de autenticação
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+    }
+  };
+
   return (
     <>
       {open && <Overlay onClick={onClose} />}
@@ -18,14 +24,18 @@ const Sidebar = ({ open, onClose }) => {
           <AiOutlineClose />
         </CloseButton>
         <Links>
-          <Link href={'/'}>
-            <AiOutlineHome />
-            Home
-          </Link>
-          <Link href={'/about'}>
-            <AiOutlineInfoCircle />
-            Sobre nós
-          </Link>
+          {user ? (
+            <>
+              <Link href="/conta">Conta</Link>
+              <Link href="/dashboard">Dashboard</Link>
+              <button onClick={handleLogout}>Sair</button>
+            </>
+          ) : (
+            <>
+              <Link href="/">Entrar</Link>
+              <Link href="/register">Cadastrar-se</Link>
+            </>
+          )}
         </Links>
       </SidebarContainer>
     </>
